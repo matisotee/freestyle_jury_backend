@@ -1,0 +1,23 @@
+[run]
+source =
+    freestyle_jury/
+omit =
+    env/*
+    */test*
+    app/*
+    */migrations/*
+    freestyle_jury/admin.py
+    freestyle_jury/apps.py
+    freestyle_jury/urls.py
+    manage.py
+
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def setUp
+    def test_
+    return raw_input
+    print
+    if __name__ == '__main__':
+    def suite
