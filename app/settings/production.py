@@ -2,7 +2,8 @@ from .base import *
 import dj_database_url
 
 ALLOWED_HOSTS = [
-    'search-events-evb.herokuapp.com',
+    'freestyle-jury-api-qa.herokuapp.com',
+    'freestyle-jury-api.herokuapp.com',
 ]
 
 DATABASES = {
@@ -17,7 +18,11 @@ DATABASES = {
 DB_FROM_ENV = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(DB_FROM_ENV)
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static_prod')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_TMP = os.path.join(BASE_DIR, 'static')
+
+os.makedirs(STATIC_TMP, exist_ok=True)
+os.makedirs(STATIC_ROOT, exist_ok=True)
 # Application definition
 
 INSTALLED_APPS += [  # noqa

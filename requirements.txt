@@ -4,3 +4,6 @@ pytz==2020.1
 sqlparse==0.3.1
 coverage==4.5.4
 python-coveralls==2.9.3
+psycopg2-binary
+dj-database-url
+whitenoise
