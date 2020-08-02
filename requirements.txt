@@ -7,3 +7,4 @@ python-coveralls==2.9.3
 psycopg2-binary
 dj-database-url
 whitenoise
+djangorestframework
