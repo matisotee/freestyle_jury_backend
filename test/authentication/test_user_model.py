@@ -49,9 +49,18 @@ class ModelTests(TestCase):
 
         self.assertEqual(user.email, self.user_parameters['email'].lower())
 
-    def test_new_user_invalid_email(self):
+    def test_new_user_invalid_email_type(self):
         """Test creating user with invalid email raises error"""
         self.user_parameters['email'] = ['test@test.com']
+
+        with self.assertRaises(ValidationError):
+            get_user_model().objects.create_user(**self.user_parameters)
+        with self.assertRaises(User.DoesNotExist):
+            self.assertIsNone(get_user_model().objects.get(name=self.user_parameters['name']))
+
+    def test_new_user_invalid_email_format(self):
+        """Test creating user with invalid email raises error"""
+        self.user_parameters['email'] = 'test'
 
         with self.assertRaises(ValidationError):
             get_user_model().objects.create_user(**self.user_parameters)
