@@ -1,16 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
-from freestyle_jury.utils import model_utils
-
 
 class UserManager(BaseUserManager):
 
     def create_user(self, email, password, **kwargs):
         """Creates and saves a new user"""
-        user = self.model(email=self.normalize_email(email), **kwargs)
+        user = self.model(email=email, **kwargs)
         user.set_password(password)
-        model_utils.check_missing_required_fields(user, self.model)
+
+        # Validate model and raise an exception if the data doesn't fit
+        user.clean_fields()
+        user.email = self.normalize_email(user.email)
         user.save(using=self._db)
 
         return user
@@ -32,11 +33,10 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     """Custom user model"""
     email = models.EmailField(max_length=255, unique=True)
-    name = models.CharField(max_length=25)
+    name = models.CharField(max_length=25,)
     last_name = models.CharField(max_length=25)
-    aka = models.CharField(max_length=25, unique=True)
+    aka = models.CharField(max_length=25, blank=True)
+    is_verified = models.BooleanField(default=False)
 
     objects = UserManager()
     USERNAME_FIELD = 'email'
-    MANDATORY_FIELDS = ['email', 'password', 'name', 'last_name']
-

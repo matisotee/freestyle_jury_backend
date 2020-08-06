@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from freestyle_jury.exceptions.exceptions import FieldMissingException
 from authentication.models import User
 
 
@@ -24,6 +24,7 @@ class ModelTests(TestCase):
         self.assertTrue(user.check_password(self.user_parameters['password']))
 
         self.user_parameters.pop('password', None)
+        self.user_parameters['is_verified'] = False
 
         for key, value in self.user_parameters.items():
             self.assertEqual(getattr(user, key), value)
@@ -33,7 +34,7 @@ class ModelTests(TestCase):
         email = 'matias@test.com'
         password = 'Testpass123'
 
-        with self.assertRaises(FieldMissingException):
+        with self.assertRaises(ValidationError):
             get_user_model().objects.create_user(
                 email=email,
                 password=password
@@ -49,10 +50,10 @@ class ModelTests(TestCase):
         self.assertEqual(user.email, self.user_parameters['email'].lower())
 
     def test_new_user_invalid_email(self):
-        """Test creating user with no email raises error"""
-        self.user_parameters['name'] = None
+        """Test creating user with invalid email raises error"""
+        self.user_parameters['email'] = ['test@test.com']
 
-        with self.assertRaises(FieldMissingException):
+        with self.assertRaises(ValidationError):
             get_user_model().objects.create_user(**self.user_parameters)
         with self.assertRaises(User.DoesNotExist):
             self.assertIsNone(get_user_model().objects.get(name=self.user_parameters['name']))
@@ -63,3 +64,4 @@ class ModelTests(TestCase):
 
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
+        self.assertFalse(user.is_verified)
