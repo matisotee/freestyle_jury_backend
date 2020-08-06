@@ -6,9 +6,9 @@ omit =
     */test*
     app/*
     */migrations/*
-    freestyle_jury/admin.py
-    freestyle_jury/apps.py
-    freestyle_jury/urls.py
+    */admin.py
+    */apps.py
+    */urls.py
     manage.py
 
 
