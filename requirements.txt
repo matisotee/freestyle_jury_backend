@@ -8,3 +8,5 @@ psycopg2-binary
 dj-database-url
 whitenoise
 djangorestframework
+gunicorn
+django-heroku
