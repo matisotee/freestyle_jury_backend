@@ -1,5 +1,6 @@
 from .base import *
 import dj_database_url
+import django_heroku
 
 ALLOWED_HOSTS = [
     'freestyle-jury-api-qa.herokuapp.com',
@@ -36,3 +37,4 @@ MIDDLEWARE += [  # noqa
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEBUG = False
+django_heroku.settings(locals())

@@ -1,5 +1,4 @@
-from django.core.exceptions import ValidationError
-from rest_framework import generics, status
+from rest_framework import generics
 
 from authentication.serializers import UserSerializer
 
