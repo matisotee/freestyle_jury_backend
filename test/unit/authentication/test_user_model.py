@@ -5,7 +5,7 @@ from django.test import TestCase
 from authentication.models import User
 
 
-class ModelTests(TestCase):
+class UserModelTests(TestCase):
 
     def setUp(self):
         self.user_parameters = {

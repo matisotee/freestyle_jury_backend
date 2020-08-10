@@ -3,7 +3,7 @@ import dj_database_url
 import django_heroku
 
 ALLOWED_HOSTS = [
-    'freestyle-jury-api.herokuapp.com',
+    'freestyle-jury-api-qa.herokuapp.com',
 ]
 
 DATABASES = {
@@ -37,5 +37,3 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEBUG = False
 django_heroku.settings(locals())
-
-FRONTEND_DOMAIN = 'freestyle-jury.herokuapp.com'

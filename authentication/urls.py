@@ -1,9 +1,10 @@
 from django.urls import path
 
-from authentication.views import CreateUserView
+from authentication.views import CreateUserView, VerificationEmailView
 
 app_name = 'authentication'
 
 urlpatterns = [
-    path('user/', CreateUserView.as_view(), name='create_user')
+    path('register/', CreateUserView.as_view(), name='create_user'),
+    path('send-verification-email/', VerificationEmailView.as_view(), name='verification_email')
 ]
