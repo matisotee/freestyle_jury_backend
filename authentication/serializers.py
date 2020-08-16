@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import serializers
 
+from authentication.account_verifier import AccountVerifier
+
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object"""
@@ -20,3 +22,10 @@ class UserSerializer(serializers.ModelSerializer):
 class VerificationEmailSerializer(serializers.Serializer):
     """Serializer for email verification request"""
     email = serializers.EmailField()
+
+    def is_valid(self, raise_exception=False):
+        is_valid = super().is_valid()
+        if not is_valid:
+            return False
+        AccountVerifier.start_verification_account_process(self.data['email'])
+        return True
