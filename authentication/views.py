@@ -1,9 +1,8 @@
-from django.contrib.auth import get_user_model
 from rest_framework import generics, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from authentication.account_verifier import AccountVerifier
 from authentication.serializers import UserSerializer, VerificationEmailSerializer
 
 
@@ -12,16 +11,12 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
 
-class VerificationEmailView(generics.CreateAPIView):
+class VerificationEmailView(APIView):
 
     serializer_class = VerificationEmailSerializer
-    queryset = get_user_model().objects.all()
 
     def post(self, request, *args, **kwargs):
-        try:
-            data = self.serializer_class(request.data).data
-            user = get_user_model().objects.get(email=data['email'])
-            AccountVerifier.generate_verification_token_for_user(user)
-            return Response(status=status.HTTP_200_OK)
-        except get_user_model().DoesNotExist:
-            raise ValidationError('The email does not belong to a user', 'EMAIL_INVALID')
+        serializer = self.serializer_class(data=request.data)
+        if not serializer.is_valid():
+            raise ValidationError('The field provided is not an email', 'EMAIL_INVALID')
+        return Response(status=status.HTTP_200_OK)

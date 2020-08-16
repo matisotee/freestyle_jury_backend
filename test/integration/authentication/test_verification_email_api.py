@@ -55,10 +55,20 @@ class VerificationEmailApiTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data[0].code, 'USER_VERIFIED')
 
-    def test_send_verification_email_with_invalid_email(self):
+    def test_send_verification_email_with_nonexistent_email(self):
         self.payload['email'] = 'invalid@email.com'
 
         response = self.client.post(SEND_VERIFICATION_EMAIL_URL, self.payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data[0].code, 'EMAIL_INVALID')
+        self.assertEqual(response.data[0], 'The email does not belong to a user')
+
+    def test_send_verification_email_with_invalid_email(self):
+        self.payload['email'] = 'invalid'
+
+        response = self.client.post(SEND_VERIFICATION_EMAIL_URL, self.payload)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data[0].code, 'EMAIL_INVALID')
+        self.assertEqual(response.data[0], 'The field provided is not an email')
