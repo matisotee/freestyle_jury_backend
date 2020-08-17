@@ -1,5 +1,6 @@
 from unittest.mock import patch, MagicMock
 
+import jwt
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from rest_framework.exceptions import ValidationError
@@ -43,3 +44,30 @@ class AccountVerifierTest(TestCase):
 
         with self.assertRaises(ValidationError):
             AccountVerifier.start_verification_account_process('test@gmail.com')
+
+    @patch('authentication.account_verifier.jwt.decode')
+    @patch('authentication.account_verifier.get_user_model')
+    def test_verify_user_account_success(self, mock_user_model, mock_decode):
+        user = MagicMock()
+        user.is_verified = False
+        user.save = MagicMock()
+        model = MagicMock()
+        model.objects.get = MagicMock(return_value=user)
+        mock_user_model.return_value = model
+
+        AccountVerifier.verify_user_account('token')
+
+        self.assertTrue(user.is_verified)
+        self.assertTrue(user.save.called)
+
+    @patch('authentication.account_verifier.jwt.decode', side_effect=jwt.exceptions.ExpiredSignatureError)
+    def test_verify_user_account_token_expired(self, mock_decode):
+
+        with self.assertRaises(ValidationError):
+            AccountVerifier.verify_user_account('token')
+
+    @patch('authentication.account_verifier.jwt.decode', side_effect=jwt.exceptions.DecodeError)
+    def test_verify_user_account_token_invalid(self, mock_decode):
+
+        with self.assertRaises(ValidationError):
+            AccountVerifier.verify_user_account('token')
