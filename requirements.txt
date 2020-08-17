@@ -11,3 +11,4 @@ djangorestframework
 gunicorn
 django-heroku
 djangorestframework-simplejwt
+pyjwt

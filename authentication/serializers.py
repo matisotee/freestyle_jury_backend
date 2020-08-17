@@ -29,3 +29,15 @@ class VerificationEmailSerializer(serializers.Serializer):
             return False
         AccountVerifier.start_verification_account_process(self.data['email'])
         return True
+
+
+class VerifyAccountSerializer(serializers.Serializer):
+    """Serializer for account verification"""
+    token = serializers.CharField()
+
+    def is_valid(self, raise_exception=False):
+        is_valid = super().is_valid()
+        if not is_valid:
+            return False
+        AccountVerifier.verify_user_account(self.data['token'])
+        return True
