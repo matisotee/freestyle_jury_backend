@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from authentication.account_verifier import AccountVerifier
+from authentication.authenticator import Authenticator
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -21,23 +22,38 @@ class UserSerializer(serializers.ModelSerializer):
 
 class VerificationEmailSerializer(serializers.Serializer):
     """Serializer for email verification request"""
-    email = serializers.EmailField()
+    email = serializers.EmailField(required=True)
 
     def is_valid(self, raise_exception=False):
         is_valid = super().is_valid()
-        if not is_valid:
-            return False
-        AccountVerifier.start_verification_account_process(self.data['email'])
-        return True
+        if is_valid:
+            AccountVerifier.start_verification_account_process(self.data['email'])
+        return is_valid
 
 
 class VerifyAccountSerializer(serializers.Serializer):
     """Serializer for account verification"""
-    token = serializers.CharField()
+    token = serializers.CharField(required=True)
 
     def is_valid(self, raise_exception=False):
         is_valid = super().is_valid()
-        if not is_valid:
-            return False
-        AccountVerifier.verify_user_account(self.data['token'])
-        return True
+        if is_valid:
+            AccountVerifier.verify_user_account(self.data['token'])
+        return is_valid
+
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=255, min_length=5, required=True)
+    password = serializers.CharField(min_length=5, write_only=True, required=True)
+    name = serializers.CharField(read_only=True)
+    last_name = serializers.CharField(read_only=True)
+    aka = serializers.CharField(read_only=True)
+    access = serializers.CharField(read_only=True)
+    refresh = serializers.CharField(read_only=True)
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        return Authenticator.login(
+            attrs['email'],
+            attrs['password']
+        )

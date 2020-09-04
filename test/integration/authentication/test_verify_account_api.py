@@ -30,11 +30,11 @@ class VerifyAccountApiTest(TestCase):
         response = self.client.get(VERIFY_ACCOUNT_URL, {'token': 'token'})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data[0].code, 'TOKEN_EXPIRED')
+        self.assertEqual(response.data[0]['code'], 'TOKEN_EXPIRED')
 
     @patch('authentication.account_verifier.jwt.decode', side_effect=jwt.exceptions.DecodeError)
     def test_verify_account_token_invalid(self, mock_decode):
         response = self.client.get(VERIFY_ACCOUNT_URL, {'token': 'token'})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data[0].code, 'TOKEN_INVALID')
+        self.assertEqual(response.data[0]['code'], 'TOKEN_INVALID')
