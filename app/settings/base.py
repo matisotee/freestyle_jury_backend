@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 from datetime import timedelta
 
-from app.settings import get_env_variable
+from app.settings import get_env_variable, get_env_variable_or_none
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -49,7 +49,7 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {
     'NON_FIELD_ERRORS_KEY': 'error',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'authentication.authenticator.FirebaseAuthentication',
     )
 }
 
@@ -137,3 +137,21 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1000000),
 }
+
+# Firebase credentials
+FIREBASE_AUTH = {
+    "SERVICE_ACCOUNT_KEY_FILE": {
+        "type": get_env_variable_or_none('FIREBASE_TYPE'),
+        "project_id": get_env_variable_or_none('FIREBASE_PROJECT_ID'),
+        "private_key_id": get_env_variable_or_none('FIREBASE_PRIVATE_KEY_ID'),
+        "private_key": get_env_variable_or_none('FIREBASE_PRIVATE_KEY'),
+        "client_email": get_env_variable_or_none('FIREBASE_CLIENT_EMAIL'),
+        "client_id": get_env_variable_or_none('FIREBASE_CLIENT_ID'),
+        "auth_uri": get_env_variable_or_none('FIREBASE_AUTH_URI'),
+        "token_uri": get_env_variable_or_none('FIREBASE_TOKEN_URI'),
+        "auth_provider_x509_cert_url": get_env_variable_or_none('FIREBASE_AUTH_PROVIDER_X509_CERT_URL'),
+        "client_x509_cert_url": get_env_variable_or_none('FIREBASE_CLIENT_X509_CERT_URL')
+    },
+    "EMAIL_VERIFICATION": True
+}
+

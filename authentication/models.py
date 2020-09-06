@@ -1,28 +1,35 @@
-from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.db import models, IntegrityError
+
+from authentication.firebase_connector import get_user_info_by_firebase_token
 
 
 class UserManager(BaseUserManager):
 
-    def create_user(self, email, password, **kwargs):
+    def create_user_by_token(self, token, name, last_name, aka=''):
+        payload = get_user_info_by_firebase_token(token)
+        return self.create_user(payload['uid'], name, last_name, aka)
+
+    def create_user(self, uid, name, last_name, aka=''):
         """Creates and saves a new user"""
-        user = self.model(email=email, **kwargs)
-        user.set_password(password)
+        if self.filter(uid=uid).exists():
+            raise IntegrityError
+
+        user = self.model(uid=uid, name=name, last_name=last_name, aka=aka)
 
         # Validate model and raise an exception if the data doesn't fit
         user.clean_fields()
-        user.email = self.normalize_email(user.email)
         user.save(using=self._db)
 
         return user
 
-    def create_superuser(self, email, password):
+    def create_superuser(self, uid, aka=''):
         """Creates and saves a super user"""
         default_params = {
             'name': 'super',
             'last_name': 'user'
         }
-        user = self.create_user(email, password, **default_params)
+        user = self.create_user(uid=uid, aka=aka, **default_params)
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
@@ -32,11 +39,11 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     """Custom user model"""
-    email = models.EmailField(max_length=255, unique=True)
+    uid = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=25,)
     last_name = models.CharField(max_length=25)
     aka = models.CharField(max_length=25, blank=True)
-    is_verified = models.BooleanField(default=False)
+    password = models.CharField(max_length=25, blank=True)
 
     objects = UserManager()
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'uid'
