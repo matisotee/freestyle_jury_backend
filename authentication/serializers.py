@@ -1,43 +1,20 @@
 from django.contrib.auth import get_user_model
-
 from rest_framework import serializers
+from rest_framework.serializers import Serializer
 
-from authentication.account_verifier import AccountVerifier
 
-
-class UserSerializer(serializers.ModelSerializer):
+class RegisterUserSerializer(Serializer):
     """Serializer for the user object"""
-    password = serializers.CharField(min_length=5, write_only=True)
+    name = serializers.CharField(max_length=255, required=True)
+    last_name = serializers.CharField(max_length=255, required=True)
     aka = serializers.CharField(max_length=25, required=False)
+    token = serializers.CharField(max_length=1000, required=True, write_only=True)
 
-    class Meta:
-        model = get_user_model()
-        fields = ('email', 'password', 'name', 'last_name', 'aka')
-
-    def create(self, validated_data):
-        """Create a new user with encrypted password and return it"""
-        return get_user_model().objects.create_user(**validated_data)
-
-
-class VerificationEmailSerializer(serializers.Serializer):
-    """Serializer for email verification request"""
-    email = serializers.EmailField()
-
-    def is_valid(self, raise_exception=False):
-        is_valid = super().is_valid()
-        if not is_valid:
-            return False
-        AccountVerifier.start_verification_account_process(self.data['email'])
-        return True
-
-
-class VerifyAccountSerializer(serializers.Serializer):
-    """Serializer for account verification"""
-    token = serializers.CharField()
-
-    def is_valid(self, raise_exception=False):
-        is_valid = super().is_valid()
-        if not is_valid:
-            return False
-        AccountVerifier.verify_user_account(self.data['token'])
-        return True
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        return get_user_model().objects.create_user_by_token(
+                name=attrs['name'],
+                last_name=attrs['last_name'],
+                token=attrs['token'],
+                aka=attrs.get('aka', '')
+        )
