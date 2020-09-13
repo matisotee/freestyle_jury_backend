@@ -135,4 +135,5 @@ dmypy.json
 .pyre/
 
 freestylejury-4989d-firebase-adminsdk-ildb6-f50f3cb265.json
-/entrypoint.sh
+
+*.pyc
