@@ -10,6 +10,4 @@ whitenoise
 djangorestframework
 gunicorn
 django-heroku
-djangorestframework-simplejwt
-pyjwt
 django-rest-firebase-auth
