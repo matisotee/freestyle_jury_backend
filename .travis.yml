@@ -24,20 +24,21 @@ jobs:
       after_success: coveralls
     - stage: Integration Test
       script: coverage run --source='.' ./manage.py test test/integration
-deploy:
-  - provider: script
-    script:
-      #build and push image
-      docker build -t freestyle-jury-api .;
-      docker tag freestyle-jury-api $DOCKER_USERNAME/freestyle-jury-api-qa:$TRAVIS_BUILD_NUMBER;
-      docker push $DOCKER_USERNAME/freestyle-jury-api-qa:$TRAVIS_BUILD_NUMBER;
-      docker tag freestyle-jury-api $DOCKER_USERNAME/freestyle-jury-api-qa:latest;
-      docker push $DOCKER_USERNAME/freestyle-jury-api-qa:latest;
-      docker tag freestyle-jury-api registry.heroku.com/$HEROKU_APP_NAME/web;
-      docker push registry.heroku.com/$HEROKU_APP_NAME/web;
-      heroku container:release web --app $HEROKU_APP_NAME
-    on:
-      branch: master
+    - stage: Build image, save and deploy
+      if: branch = master AND type = push
+      script:
+         #build and push image
+        - docker build -t freestyle-jury-api .
+        - docker tag freestyle-jury-api $DOCKER_USERNAME/freestyle-jury-api-qa:$TRAVIS_BUILD_NUMBER
+        - docker push $DOCKER_USERNAME/freestyle-jury-api-qa:$TRAVIS_BUILD_NUMBER
+        - docker tag freestyle-jury-api $DOCKER_USERNAME/freestyle-jury-api-qa:latest
+        - docker push $DOCKER_USERNAME/freestyle-jury-api-qa:latest
+        - docker tag freestyle-jury-api registry.heroku.com/$HEROKU_APP_NAME/web
+        - docker push registry.heroku.com/$HEROKU_APP_NAME/web
+        - heroku container:release web --app $HEROKU_APP_NAME
+branches:
+  only:
+    - master
 #script:
 #  - coverage run --source='.' ./manage.py test
 #after_success:
