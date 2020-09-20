@@ -25,7 +25,7 @@ jobs:
     - stage: Integration Test
       script: coverage run --source='.' ./manage.py test test/integration
     - stage: Build image, save and deploy
-      if: branch = master AND type = push
+      if: branch = master AND tag IS present
       script:
          #build and push image
         - docker build -t freestyle-jury-api .
