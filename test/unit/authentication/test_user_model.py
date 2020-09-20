@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
 
+from authentication.firebase_connector import FirebaseConnector
 from authentication.models import User, UserManager
 
 
@@ -41,8 +42,9 @@ class UserModelTests(TestCase):
         with self.assertRaises(IntegrityError):
             get_user_model().objects.create_user(**self.user_parameters)
 
-    @patch(
-        'authentication.models.get_user_info_by_firebase_token',
+    @patch.object(
+        FirebaseConnector,
+        'get_user_info_by_firebase_token',
         return_value={'uid': 'test_uid'}
     )
     @patch.object(UserManager, 'create_user')

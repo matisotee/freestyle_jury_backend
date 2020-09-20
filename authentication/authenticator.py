@@ -3,7 +3,7 @@ from django.utils.translation import gettext as _
 from rest_framework import exceptions
 from rest_framework.authentication import get_authorization_header, BaseAuthentication
 
-from authentication.firebase_connector import authenticate_in_firebase
+from authentication.firebase_connector import FirebaseConnector
 
 User = get_user_model()
 
@@ -26,7 +26,7 @@ class FirebaseAuthentication(BaseAuthentication):
         if not firebase_token:
             return None
 
-        payload = authenticate_in_firebase(firebase_token)
+        payload = FirebaseConnector.authenticate_in_firebase(firebase_token)
         user = self.get_user_by_uid(payload['uid'])
 
         return (user, payload)

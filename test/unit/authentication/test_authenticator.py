@@ -4,6 +4,7 @@ from django.test import TestCase
 from rest_framework.exceptions import AuthenticationFailed
 
 from authentication.authenticator import FirebaseAuthentication, User
+from authentication.firebase_connector import FirebaseConnector
 
 
 class FirebaseAuthenticationTest(TestCase):
@@ -11,12 +12,17 @@ class FirebaseAuthenticationTest(TestCase):
     def setUp(self):
         self.authenticator = FirebaseAuthentication()
 
-    @patch.object(FirebaseAuthentication, 'get_user_by_uid', return_value='mock_user')
-    @patch(
-        'authentication.authenticator.authenticate_in_firebase',
+    @patch.object(
+        FirebaseAuthentication, 'get_user_by_uid', return_value='mock_user'
+    )
+    @patch.object(
+        FirebaseConnector,
+        'authenticate_in_firebase',
         return_value={'uid': 'mock_uid'}
     )
-    @patch.object(FirebaseAuthentication, 'get_token', return_value='token')
+    @patch.object(
+        FirebaseAuthentication, 'get_token', return_value='token'
+    )
     def test_authenticate_successfully(self, mock_get_token, mock_firebase, mock_get_user):
 
         result = self.authenticator.authenticate('request')
@@ -70,7 +76,9 @@ class FirebaseAuthenticationTest(TestCase):
 
     def test_get_user_by_uid_successfully(self):
 
-        user = User.objects.create_user(uid='uid', name='test', last_name='user')
+        user = User.objects.create_user(
+            uid='uid', name='test', last_name='user'
+        )
 
         result = self.authenticator.get_user_by_uid('uid')
 

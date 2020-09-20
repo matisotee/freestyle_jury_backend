@@ -45,4 +45,3 @@ class RegisterUserViewTest(TestCase):
 
         with self.assertRaises(ValidationError):
             view.post(request)
-
