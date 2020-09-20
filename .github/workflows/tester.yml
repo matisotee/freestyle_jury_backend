@@ -6,6 +6,9 @@ on:
 jobs:
   Test:
     runs-on: ubuntu-latest
+    env:
+      OS: 'ubuntu-latest'
+      PYTHON: '3.8'
     steps:
     - uses: actions/checkout@master
       with:
@@ -22,13 +25,19 @@ jobs:
         pip install -r requirements.txt
     - name: Unit Test
       run: |
-        coverage run --source='.' ./manage.py test test/unit
-        coveralls
+        pytest test/unit --cov=./ --cov-report=xml
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO }}
+    - name: Coverage
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.xml
+        env_vars: OS,PYTHON
+        name: codecov-umbrella
+        fail_ci_if_error: true
     - name: Integration Test
       run: |
-        coverage run --source='.' ./manage.py test test/integration
+        pytest test/integration
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
