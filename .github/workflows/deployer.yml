@@ -1,4 +1,4 @@
-name: Tag version
+name: Test, build and deploy
 on:
   push:
     branches:
@@ -10,18 +10,50 @@ jobs:
     - uses: actions/checkout@master
       with:
         fetch-depth: '0'
+    # TEST
+    - name: Set up Python 3.x
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8
+        pip install -r requirements.txt
+    - name: Unit Test
+      run: |
+        coverage run --source='.' ./manage.py test test/unit
+        coveralls
+      env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO }}
+    - name: Integration Test
+      run: |
+        coverage run --source='.' ./manage.py test test/integration
+      env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+    #DEPLOY
     - name: Bump version and push tag
       uses: anothrNick/github-tag-action@1.26.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: false
-    - name: 'Get Previous tag'
+    - name: Get Previous tag
       id: previoustag
       uses: "WyriHaximus/github-action-get-previous-tag@master"
-    - name: Publish to Registry
+    - name: Deploy to Dockerhub
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
         name: matisotee/freestyle-jury-api
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         tags: "latest,${{ steps.previoustag.outputs.tag }}"
+    - name: Deploy to Heroku QA
+      id: heroku
+      uses: jctaveras/heroku-deploy@v1.0.0  # use the latest version of the action
+      with:
+        email: ${{ secrets.HEROKU_EMAIL }}
+        api_key: ${{ secrets.HEROKU_API_KEY }}
+        app_name: ${{ secrets.HEROKU_APP_NAME }}
+        dockerfile_path: '.'
+        options: ''
