@@ -11,4 +11,3 @@ djangorestframework
 gunicorn
 django-heroku
 django-rest-firebase-auth
-codecov
