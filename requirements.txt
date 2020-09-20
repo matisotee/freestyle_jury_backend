@@ -9,4 +9,5 @@ dj-database-url
 whitenoise
 djangorestframework
 gunicorn
+django-heroku
 django-rest-firebase-auth
