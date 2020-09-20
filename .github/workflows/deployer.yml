@@ -55,5 +55,5 @@ jobs:
         email: ${{ secrets.HEROKU_EMAIL }}
         api_key: ${{ secrets.HEROKU_API_KEY }}
         app_name: ${{ secrets.HEROKU_APP_NAME }}
-        dockerfile_path: '.'
+        dockerfile_path: 'freestyle_jury_backend/'
         options: ''
