@@ -1,0 +1,8 @@
+[flake8]
+exclude =
+    migrations,
+    __pychache__,
+    manage.py,
+    settings,
+    env
+ignore = E501

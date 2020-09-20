@@ -23,6 +23,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8
         pip install -r requirements.txt
+    - name: Linting
+      run: |
+        flake8
+      env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
     - name: Unit Test
       run: |
         pytest test/unit --cov=./ --cov-report=xml

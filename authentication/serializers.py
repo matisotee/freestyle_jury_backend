@@ -13,8 +13,8 @@ class RegisterUserSerializer(Serializer):
     def validate(self, attrs):
         attrs = super().validate(attrs)
         return get_user_model().objects.create_user_by_token(
-                name=attrs['name'],
-                last_name=attrs['last_name'],
-                token=attrs['token'],
-                aka=attrs.get('aka', '')
+            name=attrs['name'],
+            last_name=attrs['last_name'],
+            token=attrs['token'],
+            aka=attrs.get('aka', '')
         )
