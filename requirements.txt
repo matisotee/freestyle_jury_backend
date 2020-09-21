@@ -12,3 +12,4 @@ django-heroku
 django-rest-firebase-auth
 pytest-django
 pytest-cov
+optimizely-sdk
