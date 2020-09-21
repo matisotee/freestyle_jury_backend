@@ -1,6 +1,13 @@
 # pull official base image
 FROM python:3.8-slim-buster as builder
 
+COPY . /app
+
+WORKDIR /app
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
 RUN apt-get update \
 && apt-get install gcc -y \
 && apt-get install libpq-dev -y \
@@ -12,19 +19,21 @@ RUN apt-get update \
 && apt-get install zlib1g-dev -y \
 && apt-get clean
 
-COPY requirements.txt /app/requirements.txt
-WORKDIR app
-RUN pip install --user -r requirements.txt
-COPY . /app
+RUN python -m venv venv
+RUN venv/bin/pip install -r requirements.txt
 
 FROM python:3.8-slim-buster AS build-image
 
-COPY --from=builder /root/.local /root/.local
+WORKDIR /app
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+RUN apt-get update \
+&& apt-get install libpq-dev -y \
+&& apt-get clean
+
 COPY --from=builder /app /app
 
-WORKDIR /app
-ENV PATH=/root/.local/bin:$PATH
-
 RUN chmod +x /app/entrypoint.sh
-
 ENTRYPOINT ["/app/entrypoint.sh"]
