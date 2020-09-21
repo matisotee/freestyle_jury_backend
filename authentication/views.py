@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from authentication.serializers import RegisterUserSerializer
+from utils import feature_flags
+from utils.feature_flags.clients import FeatureFlagManager
 
 
 class RegisterUserView(APIView):
@@ -14,6 +16,11 @@ class RegisterUserView(APIView):
     permission_classes = []
 
     def post(self, request, *args, **kwargs):
+
+        if not FeatureFlagManager.is_feature_enabled(
+            feature_flags.REGISTER_ENDPOINT
+        ):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
         try:
             serializer = self.serializer_class(data=request.data)
             if not serializer.is_valid():
