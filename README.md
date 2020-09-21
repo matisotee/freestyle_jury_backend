@@ -1,6 +1,5 @@
-# freestyle_jury_backend
-![Coverage Status](https://coveralls.io/repos/github/matisotee/freestyle_jury_backend/badge.svg?branch=master)
-![Build Status](https://travis-ci.com/matisotee/freestyle_jury_backend.svg?branch=master)
+# Freestyle Jury API
+[![codecov](https://codecov.io/gh/matisotee/freestyle_jury_backend/branch/master/graph/badge.svg)](https://codecov.io/gh/matisotee/freestyle_jury_backend)
 
 REST API for Freestyle Jury
 Developed in django
