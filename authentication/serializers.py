@@ -1,6 +1,8 @@
-from django.contrib.auth import get_user_model
+
 from rest_framework import serializers
 from rest_framework.serializers import Serializer
+
+from authentication.models import User
 
 
 class RegisterUserSerializer(Serializer):
@@ -12,7 +14,7 @@ class RegisterUserSerializer(Serializer):
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
-        return get_user_model().objects.create_user_by_token(
+        return User.objects.create_user_by_token(
             name=attrs['name'],
             last_name=attrs['last_name'],
             token=attrs['token'],

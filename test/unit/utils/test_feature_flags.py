@@ -1,65 +1,63 @@
 from unittest.mock import patch, MagicMock
 
-from django.test import TestCase
-
 from utils.feature_flags.clients import OptimizelyFeatureFlags, FeatureFlagManager
 
 
-class OptimizelyFeatureFlagsTest(TestCase):
+# OptimizelyFeatureFlagsTest
 
-    @patch('utils.feature_flags.clients.optimizely')
-    def test_get_client_and_optimizely_parameters_without_user(self, mock_optimizely):
-        mock_optimizely.Optimizely.return_value = 'client'
+@patch('utils.feature_flags.clients.optimizely')
+def test_get_client_and_optimizely_parameters_without_user(mock_optimizely):
+    mock_optimizely.Optimizely.return_value = 'client'
 
-        result = OptimizelyFeatureFlags.get_client_and_optimizely_parameters(None)
+    result = OptimizelyFeatureFlags.get_client_and_optimizely_parameters(None)
 
-        self.assertEqual(result, ('client', '', None))
-
-    @patch('utils.feature_flags.clients.optimizely')
-    def test_get_client_and_optimizely_parameters_with_user(self, mock_optimizely):
-        mock_optimizely.Optimizely.return_value = 'client'
-
-        result = OptimizelyFeatureFlags.get_client_and_optimizely_parameters(
-            {'id': '1234', 'data': 'test_data'}
-        )
-
-        self.assertEqual(result, ('client', '1234', {'data': 'test_data'}))
-
-    @patch.object(OptimizelyFeatureFlags, 'get_client_and_optimizely_parameters')
-    def test_is_feature_enabled(self, mock_get_client_and_params):
-        mock_get_client_and_params.return_value = (MagicMock(), MagicMock(), MagicMock())
-        client = mock_get_client_and_params.return_value[0]
-
-        OptimizelyFeatureFlags.is_feature_enabled('test')
-
-        self.assertTrue(client.is_feature_enabled.called)
-
-    @patch.object(OptimizelyFeatureFlags, 'get_client_and_optimizely_parameters')
-    def test_get_feature_variable(self, mock_get_client_and_params):
-        mock_get_client_and_params.return_value = (MagicMock(), MagicMock(), MagicMock())
-        client = mock_get_client_and_params.return_value[0]
-
-        OptimizelyFeatureFlags.get_feature_variable('test', 'test')
-
-        self.assertTrue(client.get_feature_variable.called)
+    assert result == ('client', '', None)
 
 
-class FeatureFlagManagerTest(TestCase):
+@patch('utils.feature_flags.clients.optimizely')
+def test_get_client_and_optimizely_parameters_with_user(mock_optimizely):
+    mock_optimizely.Optimizely.return_value = 'client'
 
-    def test_is_feature_enabled(self):
-        FeatureFlagManager.feature_flag_client = MagicMock()
+    result = OptimizelyFeatureFlags.get_client_and_optimizely_parameters(
+        {'id': '1234', 'data': 'test_data'}
+    )
 
-        FeatureFlagManager.is_feature_enabled('test')
+    assert result == ('client', '1234', {'data': 'test_data'})
 
-        self.assertTrue(
-            FeatureFlagManager.feature_flag_client.is_feature_enabled.called
-        )
 
-    def test_get_feature_variable(self):
-        FeatureFlagManager.feature_flag_client = MagicMock()
+@patch.object(OptimizelyFeatureFlags, 'get_client_and_optimizely_parameters')
+def test_is_feature_enabled(mock_get_client_and_params):
+    mock_get_client_and_params.return_value = (MagicMock(), MagicMock(), MagicMock())
+    client = mock_get_client_and_params.return_value[0]
 
-        FeatureFlagManager.get_feature_variable('test', 'test')
+    OptimizelyFeatureFlags.is_feature_enabled('test')
 
-        self.assertTrue(
-            FeatureFlagManager.feature_flag_client.get_feature_variable.called
-        )
+    assert client.is_feature_enabled.called
+
+
+@patch.object(OptimizelyFeatureFlags, 'get_client_and_optimizely_parameters')
+def test_get_feature_variable(mock_get_client_and_params):
+    mock_get_client_and_params.return_value = (MagicMock(), MagicMock(), MagicMock())
+    client = mock_get_client_and_params.return_value[0]
+
+    OptimizelyFeatureFlags.get_feature_variable('test', 'test')
+
+    assert client.get_feature_variable.called
+
+
+# FeatureFlagManagerTest
+
+def test_manager_is_feature_enabled():
+    FeatureFlagManager.feature_flag_client = MagicMock()
+
+    FeatureFlagManager.is_feature_enabled('test')
+
+    assert FeatureFlagManager.feature_flag_client.is_feature_enabled.called
+
+
+def test_manager_get_feature_variable():
+    FeatureFlagManager.feature_flag_client = MagicMock()
+
+    FeatureFlagManager.get_feature_variable('test', 'test')
+
+    assert FeatureFlagManager.feature_flag_client.get_feature_variable.called

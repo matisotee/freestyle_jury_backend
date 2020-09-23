@@ -1,11 +1,9 @@
-from django.contrib.auth import get_user_model
 from django.utils.translation import gettext as _
 from rest_framework import exceptions
 from rest_framework.authentication import get_authorization_header, BaseAuthentication
 
 from authentication.firebase_connector import FirebaseConnector
-
-User = get_user_model()
+from authentication.models import User
 
 
 class FirebaseAuthentication(BaseAuthentication):
