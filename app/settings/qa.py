@@ -1,5 +1,4 @@
 from .base import *
-import django_heroku
 
 ALLOWED_HOSTS = [
     'freestyle-jury-api-qa.herokuapp.com',
@@ -25,4 +24,3 @@ MIDDLEWARE += [  # noqa
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEBUG = True
-django_heroku.settings(locals())
