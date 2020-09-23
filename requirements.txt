@@ -1,7 +1,7 @@
 asgiref==3.2.10
-Django==3.0.8
+Django<=3.0.5,>=2.1
 pytz==2020.1
-sqlparse==0.3.1
+sqlparse==0.2.4
 coverage==4.5.4
 psycopg2-binary
 dj-database-url
@@ -13,3 +13,5 @@ django-rest-firebase-auth
 pytest-django
 pytest-cov
 optimizely-sdk
+djongo
+dnspython
