@@ -1,10 +1,10 @@
-name: Test
+name: Test, build and deploy to QA
 on:
-  pull_request:
+  push:
     branches:
       - master
 jobs:
-  Test:
+  Deploy:
     runs-on: ubuntu-latest
     env:
       OS: 'ubuntu-latest'
@@ -41,3 +41,26 @@ jobs:
         env_vars: OS,PYTHON
         name: codecov-umbrella
         fail_ci_if_error: true
+    #DEPLOY
+    - name: Bump version and push tag
+      uses: anothrNick/github-tag-action@1.26.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: false
+    - name: Get Previous tag
+      id: previoustag
+      uses: "WyriHaximus/github-action-get-previous-tag@master"
+    - name: Deploy to Dockerhub
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: matisotee/freestyle-jury-api-qa
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        tags: "latest,${{ steps.previoustag.outputs.tag }}"
+    - name: Deploy to Heroku QA
+      uses: akhileshns/heroku-deploy@v3.5.6
+      with:
+        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+        heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+        heroku_email: ${{ secrets.HEROKU_EMAIL }}
+        usedocker: true
