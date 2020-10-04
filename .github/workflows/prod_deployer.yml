@@ -60,3 +60,21 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         tags: "latest,${{ steps.previoustag.outputs.tag }}"
+
+  Slack:
+    name: Slack
+    needs: publish # set needs only last job except this job
+    runs-on: ubuntu-latest
+    if: always() # set always
+    steps:
+      # run this action to get workflow conclusion
+      # You can get conclusion via env (env.WORKFLOW_CONCLUSION)
+      - uses: technote-space/workflow-conclusion-action@v1
+      - uses: 8398a7/action-slack@v2
+        with:
+          # status: ${{ env.WORKFLOW_CONCLUSION }} # neutral, success, cancelled, timed_out, failure
+          status: failure
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: env.WORKFLOW_CONCLUSION == 'failure' # notify only if failure
