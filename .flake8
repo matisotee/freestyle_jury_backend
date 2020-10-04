@@ -5,4 +5,5 @@ exclude =
     manage.py,
     settings,
     env
+    test
 ignore = E501
