@@ -14,3 +14,4 @@ pytest-cov
 optimizely-sdk
 djongo
 dnspython
+requests

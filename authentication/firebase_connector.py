@@ -1,8 +1,7 @@
 from django.utils.translation import gettext as _
 from rest_framework import exceptions
 
-from firebase_admin import auth
-from firebase_admin import credentials, initialize_app
+from firebase_admin import auth, credentials, initialize_app
 from firebase_auth.settings import firebase_auth_settings
 
 

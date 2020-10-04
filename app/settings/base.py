@@ -160,6 +160,7 @@ FIREBASE_AUTH = {
     },
     "EMAIL_VERIFICATION": True
 }
+FIREBASE_API_KEY = get_env_variable_or_none('FIREBASE_API_KEY')
 
 # Optimizely credential
 OPTIMIZELY_SDK_KEY = get_env_variable_or_none('OPTIMIZELY_SDK_KEY')

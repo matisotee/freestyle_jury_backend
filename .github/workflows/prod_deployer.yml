@@ -1,8 +1,7 @@
 name: Test, build and deploy to prod
 on:
   schedule:
-    # - cron: '0 1,7,13,19 * * *'
-    - cron: '45 * * * *'
+    - cron: '0 1,7,13,19 * * *'
 jobs:
   Deploy:
     runs-on: ubuntu-latest
@@ -47,6 +46,7 @@ jobs:
         pytest test/integration
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
     #DEPLOY
     - name: Get Previous tag
       if: env.HAS_CHANGES
