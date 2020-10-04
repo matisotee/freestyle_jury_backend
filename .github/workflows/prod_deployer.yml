@@ -63,7 +63,7 @@ jobs:
 
   Slack:
     name: Slack
-    needs: publish # set needs only last job except this job
+    needs: Deploy # set needs only last job except this job
     runs-on: ubuntu-latest
     if: always() # set always
     steps:
