@@ -1,9 +1,13 @@
 from django.db import IntegrityError
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from api_documentation.register_user_view import (
+    RESPONSE_201, RESPONSE_400, RESPONSE_401, RESPONSE_403
+)
 from authentication.serializers import RegisterUserSerializer
 from utils import feature_flags
 from utils.feature_flags.clients import FeatureFlagManager
@@ -15,6 +19,15 @@ class RegisterUserView(APIView):
     authentication_classes = []
     permission_classes = []
 
+    @swagger_auto_schema(
+        request_body=RegisterUserSerializer,
+        responses={
+            201: RESPONSE_201,
+            400: RESPONSE_400,
+            401: RESPONSE_401,
+            403: RESPONSE_403
+        }
+    )
     def post(self, request, *args, **kwargs):
 
         if not FeatureFlagManager.is_feature_enabled(
