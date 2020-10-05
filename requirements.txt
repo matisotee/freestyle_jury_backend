@@ -6,7 +6,7 @@ coverage==4.5.4
 psycopg2-binary
 dj-database-url
 whitenoise
-djangorestframework
+djangorestframework==3.11.0
 gunicorn
 django-rest-firebase-auth
 pytest-django
@@ -15,3 +15,4 @@ optimizely-sdk
 djongo
 dnspython
 requests
+drf-yasg
