@@ -47,6 +47,15 @@ jobs:
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
         FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+        FIREBASE_AUTH_URI: ${{ secrets.FIREBASE_AUTH_URI }}
+        FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
+        FIREBASE_CLIENT_ID: ${{ secrets.FIREBASE_CLIENT_ID }}
+        FIREBASE_CLIENT_X509_CERT_URL: ${{ secrets.FIREBASE_CLIENT_X509_CERT_URL }}
+        FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
+        FIREBASE_PRIVATE_KEY_ID: ${{ secrets.FIREBASE_PRIVATE_KEY_ID }}
+        FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+        FIREBASE_TOKEN_URI: ${{ secrets.FIREBASE_TOKEN_URI }}
+        FIREBASE_TYPE: ${{ secrets.FIREBASE_TYPE }}
         MONGO_DATABASE_NAME: ${{ secrets.MONGO_DATABASE_NAME }}
         MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
         MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
