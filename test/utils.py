@@ -6,6 +6,7 @@ from firebase_admin import auth
 from rest_framework.test import APIClient
 
 from authentication.firebase_connector import FirebaseConnector
+from authentication.models import User
 
 
 def initialize_firebase():
@@ -48,6 +49,11 @@ def verified_firebase_user(verified_firebase_login_info):
         'token': json_response['idToken']
     }
 
+
+@pytest.fixture
+def authenticated_user(verified_firebase_user):
+    user = User.objects.create_user(verified_firebase_user['uid'], 'Test', 'test', aka='t')
+    return user
 
 @pytest.fixture
 def client():

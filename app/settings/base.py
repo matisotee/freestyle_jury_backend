@@ -11,6 +11,9 @@ import os
 from datetime import timedelta
 
 from app.settings import get_env_variable, get_env_variable_or_none
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(
@@ -36,7 +39,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'drf_yasg',
     'freestyle_jury',
-    'authentication'
+    'authentication',
+    'competition'
 ]
 
 MIDDLEWARE = [
@@ -151,7 +155,7 @@ FIREBASE_AUTH = {
         "type": get_env_variable_or_none('FIREBASE_TYPE'),
         "project_id": get_env_variable_or_none('FIREBASE_PROJECT_ID'),
         "private_key_id": get_env_variable_or_none('FIREBASE_PRIVATE_KEY_ID'),
-        "private_key": get_env_variable_or_none('FIREBASE_PRIVATE_KEY'),
+        "private_key": get_env_variable_or_none('FIREBASE_PRIVATE_KEY').replace('\\n', '\n'),
         "client_email": get_env_variable_or_none('FIREBASE_CLIENT_EMAIL'),
         "client_id": get_env_variable_or_none('FIREBASE_CLIENT_ID'),
         "auth_uri": get_env_variable_or_none('FIREBASE_AUTH_URI'),
