@@ -1,9 +1,11 @@
 from rest_framework import serializers
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from competition.exceptions import CompetitionPastDateError
 from competition.services.competition_creator import CompetitionCreator
 
 from authentication.authenticator import FirebaseAuthentication
@@ -48,9 +50,12 @@ class CreateCompetitionView(APIView):
         data = request.data
         data['organizer'] = request.user.__dict__
 
-        serializer = self.serializer_class(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        try:
+            serializer = self.serializer_class(data=data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+        except CompetitionPastDateError:
+            raise ValidationError('Date: set a current or future date', code='PAST_DATE')
         competition = serializer.data
 
         return Response(competition, status=status.HTTP_201_CREATED)

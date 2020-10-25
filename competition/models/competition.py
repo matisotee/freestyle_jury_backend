@@ -1,10 +1,10 @@
 import datetime
 
-from django.core.exceptions import ValidationError
 from django.utils import timezone
 from djongo import models
 from pytz import utc
 
+from competition.exceptions import CompetitionPastDateError, CompetitionCreationError
 from competition.models.competitor import Competitor
 from competition.models.phase import Phase
 
@@ -13,15 +13,16 @@ class CompetitionManager(models.DjongoManager):
 
     def create(self, *args, **kwargs):
         if kwargs.get('phases') or kwargs.get('competitors'):
-            raise ValidationError(
+            raise CompetitionCreationError(
                 'Cannot create a new competition with competitors or phases'
             )
 
         competition = self.model(**kwargs)
 
         if competition.date < datetime.datetime.now(tz=utc):
-            raise ValidationError('Date: set a current or future date', code='PAST_DATE')
-
+            raise CompetitionPastDateError(
+                'You tried to set a past date to a new competition'
+            )
         competition.status = Competition.STATUS_CREATED
         # Validate model and raise an exception if the data doesn't fit
         competition.clean_fields()
