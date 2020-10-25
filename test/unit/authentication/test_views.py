@@ -54,10 +54,8 @@ def test_post_with_non_valid_request(mock_ff):
     request = MagicMock()
     request.data = payload
 
-    with pytest.raises(ValidationError) as exc_info:
+    with pytest.raises(ValidationError):
         view.post(request)
-    exception_raised = exc_info.value
-    assert exception_raised.detail[0].code == 'INVALID_FIELDS'
 
 
 @patch.object(FeatureFlagManager, 'is_feature_enabled', return_value=True)

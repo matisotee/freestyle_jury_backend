@@ -5,6 +5,7 @@ import pytest
 import pytz
 from django.core.exceptions import ValidationError
 
+from competition.exceptions import CompetitionPastDateError, CompetitionCreationError
 from competition.models.competition import Competition
 
 
@@ -51,7 +52,7 @@ def test_create_with_a_phase_fails():
         'phases': ['test']
     }
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(CompetitionCreationError):
         Competition.objects.create(**competition_dict)
 
 
@@ -64,5 +65,5 @@ def test_create_with_a_past_date_fails():
         'open_inscription_during_competition': True,
     }
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(CompetitionPastDateError):
         Competition.objects.create(**competition_dict)

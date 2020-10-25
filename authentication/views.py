@@ -36,8 +36,7 @@ class RegisterUserView(APIView):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         try:
             serializer = self.serializer_class(data=request.data)
-            if not serializer.is_valid():
-                raise ValidationError('Missing or invalid fields', 'INVALID_FIELDS')
+            serializer.is_valid(raise_exception=True)
         except IntegrityError:
             raise ValidationError('This user already exist', 'USER_ALREADY_EXIST')
 

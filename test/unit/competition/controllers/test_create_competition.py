@@ -9,6 +9,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from competition.controllers.create_competition import CreateCompetitionView
+from competition.exceptions import CompetitionPastDateError
 from competition.models.competition import Competition
 from competition.services.competition_creator import CompetitionCreator
 
@@ -101,6 +102,29 @@ def test_create_competition_with_wrong_date_fails(organizer_dict):
     competition_dict = {
         'name': "Rapublik",
         'date': 'test',
+        'open_inscription_during_competition': True
+    }
+
+    request = MagicMock()
+    request.data = competition_dict
+    request.user.__dict__ = organizer_dict
+
+    with pytest.raises(ValidationError):
+        CreateCompetitionView().post(request)
+
+
+@patch.object(CompetitionCreator, 'create_competition')
+def test_create_competition_with_past_date_fails(
+        mock_create_competition, organizer_dict, now_date
+):
+    mock_create_competition.side_effect = CompetitionPastDateError()
+
+    date = now_date - datetime.timedelta(hours=1)
+    date = date.isoformat()
+
+    competition_dict = {
+        'name': "Rapublik",
+        'date': date,
         'open_inscription_during_competition': True
     }
 
