@@ -1,0 +1,12 @@
+version: '3.3'
+
+services:
+  app:
+    build: .
+    environment:
+      - SECRETHUB_CREDENTIAL=$SECRETHUB_CREDENTIAL
+      - ENV=dev
+    ports:
+      - "8007:8765"
+    volumes:
+      - .:/app
