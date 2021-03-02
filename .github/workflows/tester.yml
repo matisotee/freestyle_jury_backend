@@ -23,16 +23,16 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8
         pip install -r requirements.txt
+    - uses: secrethub/actions/env-export@v0.2.1
+      env:
+        SECRETHUB_CREDENTIAL: ${{ secrets.SECRETHUB_CREDENTIAL }}
+        SECRETHUB_VAR_env: dev
     - name: Linting
       run: |
         flake8
-      env:
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
     - name: Unit Test
       run: |
         pytest test/unit --cov=./ --cov-report=xml
-      env:
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
     - name: Coverage
       uses: codecov/codecov-action@v1
       with:
