@@ -3,6 +3,8 @@ from rest_framework.views import exception_handler
 
 def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
+    if not response:
+        return None
     if isinstance(response.data, list):
         data = {
             'detail': response.data[0],

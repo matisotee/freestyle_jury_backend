@@ -5,6 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from rest_meets_djongo.fields import ObjectIdField
+
 from competition.exceptions import CompetitionPastDateError
 from competition.services.competition_creator import CompetitionCreator
 
@@ -15,7 +17,7 @@ class OrganizerSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=25)
     last_name = serializers.CharField(max_length=25)
     aka = serializers.CharField(max_length=25, required=False)
-    uid = serializers.CharField(max_length=255)
+    _id = ObjectIdField()
 
 
 class CreateCompetitionSerializer(serializers.Serializer):

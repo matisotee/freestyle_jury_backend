@@ -1,12 +1,23 @@
 version: '3.3'
 
 services:
+  mongodb:
+    image: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=freestyle_jury
+    ports:
+      - "27017:27017"
   app:
     build: .
-    environment:
-      - SECRETHUB_CREDENTIAL=$SECRETHUB_CREDENTIAL
-      - ENV=dev
+    env_file:
+      - dev_variables.env
+    stdin_open: true
+    tty: true
     ports:
       - "8007:8765"
     volumes:
       - .:/app
+    depends_on:
+      - mongodb
+    links:
+      - mongodb

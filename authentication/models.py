@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.db import models, IntegrityError
+from django.db import IntegrityError
+from djongo import models
 
 from authentication.firebase_connector import FirebaseConnector
 
@@ -39,6 +40,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     """Custom user model"""
+    _id = models.ObjectIdField(db_column='_id')
     uid = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=25,)
     last_name = models.CharField(max_length=25)
