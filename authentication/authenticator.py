@@ -53,6 +53,7 @@ class FirebaseAuthentication(BaseAuthentication):
 
         try:
             user = User.objects.get(**{self.uid_field: uid})
+            user._id = str(user._id)
         except User.DoesNotExist:
             msg = _("User not registered")
             raise exceptions.AuthenticationFailed(msg)

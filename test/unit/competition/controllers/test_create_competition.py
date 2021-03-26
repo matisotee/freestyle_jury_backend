@@ -36,7 +36,7 @@ def organizer_dict():
         'name': 'Test',
         'last_name': 'Test',
         'aka': 'T',
-        'uid': 'test',
+        '_id': 'test',
     }
 
 
@@ -46,7 +46,7 @@ def organizer_ordered_dict(organizer_dict):
         ('name', organizer_dict['name']),
         ('last_name', organizer_dict['last_name']),
         ('aka', organizer_dict['aka']),
-        ('uid', organizer_dict['uid'])
+        ('_id', organizer_dict['_id'])
     ]
     return collections.OrderedDict(organizer_ordered_dict)
 

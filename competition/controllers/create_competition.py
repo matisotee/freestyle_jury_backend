@@ -15,7 +15,7 @@ class OrganizerSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=25)
     last_name = serializers.CharField(max_length=25)
     aka = serializers.CharField(max_length=25, required=False)
-    uid = serializers.CharField(max_length=255)
+    _id = serializers.CharField(max_length=100)
 
 
 class CreateCompetitionSerializer(serializers.Serializer):
@@ -26,14 +26,14 @@ class CreateCompetitionSerializer(serializers.Serializer):
     organizer = OrganizerSerializer(write_only=True)
 
     def create(self, validated_data):
-        user_dict = validated_data.get('organizer')
+        organizer_dict = validated_data.get('organizer')
         name = validated_data.get('name')
         date = validated_data.get('date')
         is_inscription_open_during_competition = validated_data.get(
             'open_inscription_during_competition'
         )
         return CompetitionCreator.create_competition(
-            user_dict,
+            organizer_dict,
             name,
             date,
             is_inscription_open_during_competition

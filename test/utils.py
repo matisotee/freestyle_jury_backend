@@ -1,9 +1,10 @@
 import pytest
 import requests
+from bson import ObjectId
 from django.conf import settings
 
 from firebase_admin import auth
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APIRequestFactory, force_authenticate
 
 from authentication.firebase_connector import FirebaseConnector
 from authentication.models import User
@@ -51,10 +52,22 @@ def verified_firebase_user(verified_firebase_login_info):
 
 
 @pytest.fixture
-def authenticated_user(verified_firebase_user):
+def authenticated_post_request(verified_firebase_user):
     user = User.objects.create_user(verified_firebase_user['uid'], 'Test', 'test', aka='t')
-    return user
+    user._id = str(user._id)
+
+    def create_request(url, payload):
+        factory = APIRequestFactory()
+        request = factory.post(url, payload, format='json')
+        force_authenticate(request, user=user)
+        return request
+    return create_request
+
 
 @pytest.fixture
 def client():
     return APIClient()
+
+
+def generate_object_id():
+    return str(ObjectId())
