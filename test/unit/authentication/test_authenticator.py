@@ -87,6 +87,7 @@ def test_get_user_by_uid_successfully(mock_objects, authenticator):
     result = authenticator.get_user_by_uid('uid')
 
     assert result == user
+    assert isinstance(result._id, str)
 
 
 @patch.object(User, 'objects')

@@ -5,11 +5,12 @@ from djongo import models
 from pytz import utc
 
 from competition.exceptions import CompetitionPastDateError, CompetitionCreationError
+from competition.models.base import BaseModel, BaseManager
 from competition.models.competitor import Competitor
 from competition.models.phase import Phase
 
 
-class CompetitionManager(models.DjongoManager):
+class CompetitionManager(BaseManager):
 
     def create(self, *args, **kwargs):
         if kwargs.get('phases') or kwargs.get('competitors'):
@@ -31,8 +32,7 @@ class CompetitionManager(models.DjongoManager):
         return competition
 
 
-class Competition(models.Model):
-    _id = models.ObjectIdField(db_column='_id')
+class Competition(BaseModel):
     name = models.CharField(max_length=255,)
     date = models.DateTimeField(default=timezone.now)
     status = models.CharField(max_length=25,)

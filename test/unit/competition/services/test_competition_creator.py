@@ -8,6 +8,7 @@ from competition.exceptions import OrganizerCreationError
 from competition.models.competition import Competition
 from competition.models.organizer import Organizer
 from competition.services.competition_creator import CompetitionCreator
+from test.utils import generate_object_id
 
 
 @pytest.fixture
@@ -16,7 +17,7 @@ def user_dict():
         'name': 'Test',
         'last_name': 'Test',
         'aka': 'T',
-        'uid': 'test',
+        '_id': generate_object_id(),
     }
 
 

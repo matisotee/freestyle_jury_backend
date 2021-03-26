@@ -1,30 +1,29 @@
 from django.core.exceptions import ValidationError
 from djongo import models
 
-from competition.exceptions import DUPLICATED_UNIQUE_FIELD_STRING
+from competition.models.base import BaseModel, BaseManager
 from competition.models.competition import Competition
 
 
-class OrganizerManager(models.DjongoManager):
+class OrganizerManager(BaseManager):
 
-    def create(self, _id, name, last_name, aka):
+    def create(self, _id, name, last_name, aka=''):
         if self.filter(_id=_id).exists():
             raise ValidationError(
-                "{'uid': ['There is another organizer with this id']}"
+                "{'_id': ['There is another organizer with this id']}"
             )
         organizer = self.model(
             _id=_id, name=name, last_name=last_name, aka=aka,
         )
 
         # Validate model and raise an exception if the data doesn't fit
-        organizer.clean_fields()
-        organizer.save(using=self._db)
+        organizer.full_clean()
+        organizer.save()
         return organizer
 
 
-class Organizer(models.Model):
-    _id = models.ObjectIdField(db_column='_id')
-    name = models.CharField(max_length=25,)
+class Organizer(BaseModel):
+    name = models.CharField(max_length=25)
     last_name = models.CharField(max_length=25)
     aka = models.CharField(max_length=25, blank=True)
     competitions = models.ArrayReferenceField(
