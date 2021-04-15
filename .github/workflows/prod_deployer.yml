@@ -38,7 +38,7 @@ jobs:
       if: ${{ env.HAS_CHANGES }}
       env:
         SECRETHUB_CREDENTIAL: ${{ secrets.SECRETHUB_CREDENTIAL }}
-        SECRETHUB_VAR_env: dev
+        SECRETHUB_VAR_env: qa
     - name: Unit Test
       if: ${{ env.HAS_CHANGES }}
       run: |
