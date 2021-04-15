@@ -4,8 +4,8 @@ from competition.models.organizer import Organizer
 
 class CompetitionCreator:
 
-    @staticmethod
-    def create_competition(organizer_dict, name, date, is_inscription_open_during_competition):
+    @classmethod
+    def create_competition(cls, organizer_dict, name, date, open_inscription_during_competition):
 
         if not organizer_dict.get('_id'):
             raise OrganizerCreationError('Missing id')
@@ -18,7 +18,14 @@ class CompetitionCreator:
         competition = organizer.create_competition(
             name,
             date,
-            is_inscription_open_during_competition
+            open_inscription_during_competition
         )
 
-        return competition
+        return cls._map_competition_to_dict(competition)
+
+    @staticmethod
+    def _map_competition_to_dict(competition):
+        return {
+            'name': competition.name,
+            'status': competition.status
+        }

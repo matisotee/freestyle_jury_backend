@@ -60,7 +60,7 @@ REST_FRAMEWORK = {
     )
 }
 
-ROOT_URLCONF = 'app.urls'
+ROOT_URLCONF = 'authentication.urls'
 
 TEMPLATES = [
     {

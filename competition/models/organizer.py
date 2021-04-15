@@ -34,11 +34,11 @@ class Organizer(BaseModel):
 
     objects = OrganizerManager()
 
-    def create_competition(self, name, date, is_inscription_open_during_competition):
+    def create_competition(self, name, date, open_inscription_during_competition):
         competition = Competition.objects.create(
             name=name,
             date=date,
-            open_inscription_during_competition=is_inscription_open_during_competition,
+            open_inscription_during_competition=open_inscription_during_competition,
         )
 
         self.competitions.add(competition)

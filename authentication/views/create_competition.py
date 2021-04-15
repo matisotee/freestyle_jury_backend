@@ -1,3 +1,6 @@
+from dependency_injector.wiring import (
+    Provide, inject,
+)
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
@@ -5,10 +8,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from competition.exceptions import CompetitionPastDateError
-from competition.services.competition_creator import CompetitionCreator
-
+from authentication.application.create_competition import CreateCompetitionService
+from authentication.application.exceptions import CallServiceError
+from authentication.domain.service_caller import ServiceCaller
 from authentication.authenticator import FirebaseAuthentication
+from authentication.infrastructure.dependency_injection.containers import Container
+from authentication.infrastructure.dependency_injection.decorator import wire
 
 
 class OrganizerSerializer(serializers.Serializer):
@@ -25,19 +30,15 @@ class CreateCompetitionSerializer(serializers.Serializer):
     open_inscription_during_competition = serializers.BooleanField(write_only=True)
     organizer = OrganizerSerializer(write_only=True)
 
-    def create(self, validated_data):
-        organizer_dict = validated_data.get('organizer')
-        name = validated_data.get('name')
-        date = validated_data.get('date')
-        is_inscription_open_during_competition = validated_data.get(
-            'open_inscription_during_competition'
-        )
-        return CompetitionCreator.create_competition(
-            organizer_dict,
-            name,
-            date,
-            is_inscription_open_during_competition
-        )
+    @wire
+    @inject
+    def create(
+        self,
+        validated_data: dict,
+        service_caller: ServiceCaller = Provide[Container.service_caller]
+    ) -> dict:
+        service = CreateCompetitionService(service_caller)
+        return service.create_competition(validated_data)
 
 
 class CreateCompetitionView(APIView):
@@ -54,8 +55,8 @@ class CreateCompetitionView(APIView):
             serializer = self.serializer_class(data=data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-        except CompetitionPastDateError:
-            raise ValidationError('Date: set a current or future date', code='PAST_DATE')
+        except CallServiceError as e:
+            raise ValidationError(str(e), code=e.code)
         competition = serializer.data
 
         return Response(competition, status=status.HTTP_201_CREATED)
