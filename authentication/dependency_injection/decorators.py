@@ -1,6 +1,6 @@
 import sys
 
-from authentication.infrastructure.dependency_injection import container
+from authentication.dependency_injection import container
 
 
 def wire(func):

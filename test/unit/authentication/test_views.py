@@ -1,13 +1,11 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 import pytest
 from django.db import IntegrityError
 from rest_framework import status
-from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from authentication.models import User
-from authentication.views import RegisterUserView
 from utils.feature_flags.clients import FeatureFlagManager
 
 
@@ -44,23 +42,23 @@ def test_post_successfully(mock_objects, mock_ff, client):
     assert response.status_code == status.HTTP_201_CREATED
 
 
+@pytest.mark.usefixtures("client")
 @patch.object(FeatureFlagManager, 'is_feature_enabled', return_value=True)
-def test_post_with_non_valid_request(mock_ff):
+def test_post_with_non_valid_request(mock_ff, client):
     payload = {
         'name': 'Test Name',
     }
 
-    view = RegisterUserView()
-    request = MagicMock()
-    request.data = payload
+    response = client.post(REGISTER_USER_URL, payload)
 
-    with pytest.raises(ValidationError):
-        view.post(request)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.data['error_code'] == 'FIELDS_ERROR'
 
 
+@pytest.mark.usefixtures("client")
 @patch.object(FeatureFlagManager, 'is_feature_enabled', return_value=True)
 @patch.object(User, 'objects')
-def test_post_with_existent_user_in_request(mock_objects, mock_ff):
+def test_post_with_existent_user_in_request(mock_objects, mock_ff, client):
     mock_objects.create_user_by_token.side_effect = IntegrityError()
     payload = {
         'name': 'Test Name',
@@ -68,21 +66,8 @@ def test_post_with_existent_user_in_request(mock_objects, mock_ff):
         'aka': 'test',
         'token': 'test',
     }
-    view = RegisterUserView()
-    request = MagicMock()
-    request.data = payload
 
-    with pytest.raises(ValidationError) as exc_info:
-        view.post(request)
-    exception_raised = exc_info.value
-    assert exception_raised.detail[0].code == 'USER_ALREADY_EXIST'
+    response = client.post(REGISTER_USER_URL, payload)
 
-
-@patch.object(FeatureFlagManager, 'is_feature_enabled', return_value=False)
-def test_post_fail_with_ff_diabled(mock_ff):
-    view = RegisterUserView()
-    request = MagicMock()
-
-    result = view.post(request)
-
-    assert result.status_code == status.HTTP_401_UNAUTHORIZED
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.data['error_code'] == 'USER_ALREADY_EXIST'

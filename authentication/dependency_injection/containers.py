@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
 
-from authentication.infrastructure.frimesh_service_caller import FrimeshServiceCaller
+from authentication.infrastructure.service_callers.frimesh_service_caller import FrimeshServiceCaller
 
 
 class Container(containers.DeclarativeContainer):

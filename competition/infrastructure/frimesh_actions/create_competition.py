@@ -3,8 +3,8 @@ from datetime import datetime
 from frimesh.action import FrimeshAction
 from frimesh.exceptions import ActionError
 
-from competition.exceptions import CompetitionPastDateError
-from competition.services.competition_creator import CompetitionCreator
+from competition.application.competition_creator import CompetitionCreator
+from competition.application.exceptions import CompetitionApplicationError
 
 
 class CreateCompetitionAction(FrimeshAction):
@@ -33,5 +33,5 @@ class CreateCompetitionAction(FrimeshAction):
             )
 
             return response
-        except CompetitionPastDateError:
-            raise ActionError('Date: set a current or future date', code='PAST_DATE')
+        except CompetitionApplicationError as e:
+            raise ActionError(e.message, code=e.code)

@@ -1,4 +1,4 @@
-class CallServiceError(Exception):
+class CompetitionApplicationError(Exception):
 
     def __init__(self, message, code):
         self.code = code

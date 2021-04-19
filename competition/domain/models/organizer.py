@@ -1,24 +1,22 @@
 from django.core.exceptions import ValidationError
 from djongo import models
 
-from competition.models.base import BaseModel, BaseManager
-from competition.models.competition import Competition
+from competition.domain.models.base import BaseModel, BaseManager
+from competition.domain.models.competition import Competition
 
 
 class OrganizerManager(BaseManager):
 
-    def create(self, _id, name, last_name, aka=''):
-        if self.filter(_id=_id).exists():
-            raise ValidationError(
-                "{'_id': ['There is another organizer with this id']}"
+    def get_or_create(self, _id, name, last_name, aka=''):
+        try:
+            organizer = self.get(_id=_id)
+        except Organizer.DoesNotExist:
+            organizer = self.model(
+                _id=_id, name=name, last_name=last_name, aka=aka,
             )
-        organizer = self.model(
-            _id=_id, name=name, last_name=last_name, aka=aka,
-        )
-
-        # Validate model and raise an exception if the data doesn't fit
-        organizer.full_clean()
-        organizer.save()
+            # Validate model and raise an exception if the data doesn't fit
+            organizer.full_clean()
+            organizer.save()
         return organizer
 
 

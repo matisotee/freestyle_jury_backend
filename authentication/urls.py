@@ -4,14 +4,14 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from authentication.views.create_competition import CreateCompetitionView
+from authentication.infrastructure.controllers.create_competition import CreateCompetitionView
 from authentication.views.register_user import RegisterUserView
 
 schema_view = get_schema_view(
     openapi.Info(
         title="Freestyle Jury API",
         default_version='v1',
-        description="An API for Freestyle Jury services",
+        description="An API for Freestyle Jury application",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="matias.sotee@gmail.com"),
         license=openapi.License(name="GNU General Public License v3.0"),
