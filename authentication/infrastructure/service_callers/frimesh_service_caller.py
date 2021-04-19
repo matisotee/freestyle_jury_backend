@@ -15,4 +15,3 @@ class FrimeshServiceCaller(ServiceCaller):
             return client.call(service, action, body)
         except CallActionError as e:
             raise CallServiceError(message=str(e), code=e.code)
-

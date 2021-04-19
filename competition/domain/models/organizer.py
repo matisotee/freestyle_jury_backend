@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from djongo import models
 
 from competition.domain.models.base import BaseModel, BaseManager
