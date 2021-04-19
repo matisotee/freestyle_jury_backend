@@ -4,26 +4,22 @@ from django.utils import timezone
 from djongo import models
 from pytz import utc
 
-from competition.exceptions import CompetitionPastDateError, CompetitionCreationError
-from competition.models.base import BaseModel, BaseManager
-from competition.models.competitor import Competitor
-from competition.models.phase import Phase
+from competition.domain.exceptions import CompetitionPastDateError
+from competition.domain.models.base import BaseModel, BaseManager
+from competition.domain.models.competitor import Competitor
+from competition.domain.models.phase import Phase
 
 
 class CompetitionManager(BaseManager):
 
-    def create(self, *args, **kwargs):
-        if kwargs.get('phases') or kwargs.get('competitors'):
-            raise CompetitionCreationError(
-                'Cannot create a new competition with competitors or phases'
-            )
+    def create(self, name, date, open_inscription_during_competition):
 
-        competition = self.model(**kwargs)
+        competition = self.model(
+            name=name, date=date, open_inscription_during_competition=open_inscription_during_competition
+        )
 
         if competition.date < datetime.datetime.now(tz=utc):
-            raise CompetitionPastDateError(
-                'You tried to set a past date to a new competition'
-            )
+            raise CompetitionPastDateError('You tried to set a past date to a new competition')
         competition.status = Competition.STATUS_CREATED
         # Validate model and raise an exception if the data doesn't fit
         competition.clean_fields()

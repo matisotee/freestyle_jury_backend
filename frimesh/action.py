@@ -4,7 +4,7 @@ from validict import (
     FailedValidationError,
 )
 
-from frimesh.exceptions import CallActionError
+from frimesh.exceptions import ValidationError
 
 
 class FrimeshAction(ABC):
@@ -14,8 +14,8 @@ class FrimeshAction(ABC):
     def validate(self, body):
         try:
             validate(self.schema, body)
-        except FailedValidationError:
-            raise CallActionError()
+        except FailedValidationError as e:
+            raise ValidationError(str(e))
 
     @abstractmethod
     def run(self, **kwargs):
