@@ -25,35 +25,35 @@ jobs:
     # TEST
     - name: Set up Python 3.x
       uses: actions/setup-python@v2
-      if: ${{ env.HAS_CHANGES }}
+      if: env.HAS_CHANGES == 'true'
       with:
         python-version: '3.8'
     - name: Install dependencies
-      if: ${{ env.HAS_CHANGES }}
+      if: env.HAS_CHANGES == 'true'
       run: |
         python -m pip install --upgrade pip
         pip install flake8
         pip install -r requirements.txt
     - uses: secrethub/actions/env-export@v0.2.1
-      if: ${{ env.HAS_CHANGES }}
+      if: env.HAS_CHANGES == 'true'
       env:
         SECRETHUB_CREDENTIAL: ${{ secrets.SECRETHUB_CREDENTIAL }}
         SECRETHUB_VAR_env: qa
     - name: Unit Test
-      if: ${{ env.HAS_CHANGES }}
+      if: env.HAS_CHANGES == 'true'
       run: |
         pytest test/unit --cov=./ --cov-report=xml
     - name: Integration Test
-      if: ${{ env.HAS_CHANGES }}
+      if: env.HAS_CHANGES == 'true'
       run: |
         pytest test/integration
     #DEPLOY
     - name: Get Previous tag
-      if: ${{ env.HAS_CHANGES }}
+      if: env.HAS_CHANGES == 'true'
       id: previoustag
       uses: "WyriHaximus/github-action-get-previous-tag@master"
     - name: Deploy to Dockerhub
-      if: ${{ env.HAS_CHANGES }}
+      if: env.HAS_CHANGES == 'true'
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
         name: matisotee/freestyle-jury-api
