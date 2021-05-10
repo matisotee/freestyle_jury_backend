@@ -10,15 +10,15 @@ from authentication.application.exceptions import CallServiceError
 from authentication.authenticator import FirebaseAuthentication
 
 
-class CreateCompetitionSerializer(serializers.Serializer):
+class CreateCompetitionRequestSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=255)
-    date = serializers.DateTimeField(write_only=True)
-    status = serializers.CharField(max_length=255, read_only=True)
-    open_inscription_during_competition = serializers.BooleanField(write_only=True)
+    date = serializers.DateTimeField()
+    open_inscription_during_competition = serializers.BooleanField()
 
-    def create(self, validated_data: dict):
-        service = CreateCompetitionService()
-        return service.create_competition(validated_data)
+
+class CreateCompetitionResponseSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=255)
+    status = serializers.CharField(max_length=255)
 
 
 class CreateCompetitionView(APIView):
@@ -29,11 +29,18 @@ class CreateCompetitionView(APIView):
     def post(self, request, *args, **kwargs):
 
         try:
-            serializer = CreateCompetitionSerializer(data=request.data)
+            serializer = CreateCompetitionRequestSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            serializer.save(authenticated_user=request.user.__dict__)
+
+            # with validate_request_and_response:
+            service = CreateCompetitionService()
+            response = service.create_competition(
+                **request.data, authenticated_user=request.user.__dict__
+            )
+
+            serializer = CreateCompetitionResponseSerializer(data=response)
+            serializer.is_valid(raise_exception=True)
         except CallServiceError as e:
             raise ValidationError(e.message, code=e.code)
-        competition = serializer.data
 
-        return Response(competition, status=status.HTTP_201_CREATED)
+        return Response(response, status=status.HTTP_201_CREATED)

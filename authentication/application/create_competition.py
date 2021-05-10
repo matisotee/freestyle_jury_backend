@@ -15,17 +15,17 @@ class CreateCompetitionService:
     def __init__(self, service_caller: ServiceCaller = Provide[Container.service_caller]):
         self.service_caller = service_caller
 
-    def create_competition(self, competition_data):
+    def create_competition(self, name, date, open_inscription_during_competition, authenticated_user):
 
         body = {
-            'name': competition_data['name'],
-            'date': competition_data['date'],
-            'open_inscription_during_competition': competition_data['open_inscription_during_competition'],
+            'name': name,
+            'date': date,
+            'open_inscription_during_competition': open_inscription_during_competition,
             'organizer': {
-                'name': competition_data['authenticated_user']['name'],
-                'last_name': competition_data['authenticated_user']['last_name'],
-                'aka': competition_data['authenticated_user']['aka'],
-                '_id': competition_data['authenticated_user']['_id']
+                'name': authenticated_user['name'],
+                'last_name': authenticated_user['last_name'],
+                'aka': authenticated_user['aka'],
+                '_id': authenticated_user['_id']
             }
         }
         return self.service_caller.call('competition', 'create_competition', body)

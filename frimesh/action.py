@@ -1,8 +1,5 @@
 from abc import ABC, abstractmethod
-from validict import (
-    validate,
-    FailedValidationError,
-)
+from marshmallow import ValidationError as MarshmallowValidationError
 
 from frimesh.exceptions import ValidationError
 
@@ -13,9 +10,11 @@ class FrimeshAction(ABC):
 
     def validate(self, body):
         try:
-            validate(self.schema, body)
-        except FailedValidationError as e:
-            raise ValidationError(str(e))
+            result = self.schema().load(body)
+        except MarshmallowValidationError as err:
+            raise ValidationError(str(err.messages))
+
+        return result
 
     @abstractmethod
     def run(self, **kwargs):
