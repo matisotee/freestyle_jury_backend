@@ -10,7 +10,7 @@ jobs:
       OS: 'ubuntu-latest'
       PYTHON: '3.8'
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2
       with:
         fetch-depth: '0'
     # TEST
