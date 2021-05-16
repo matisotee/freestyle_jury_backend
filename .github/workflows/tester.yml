@@ -10,9 +10,9 @@ jobs:
       OS: 'ubuntu-latest'
       PYTHON: '3.8'
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: '0'
+    - uses: actions/checkout@master
+#      with:
+#        fetch-depth: '0'
     # TEST
     - name: Set up Python 3.x
       uses: actions/setup-python@v2
