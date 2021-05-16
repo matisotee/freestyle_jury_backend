@@ -7,7 +7,7 @@ from frimesh.exceptions import (
     NotExistentActionError,
     NotExistentServiceError,
     ServerError,
-    ServiceNameError,
+    ServiceNameError, ValidationError,
 )
 
 
@@ -32,16 +32,24 @@ class FrimeshClient:
         if not actions_map:
             NotExistentServiceError(f"The service {service} is not registered in the map")
 
-        action = actions_map.get(action)
+        action_class = actions_map.get(action)
 
-        if not action:
+        if not action_class:
             NotExistentActionError(f"The action {action} doesn't exist")
 
-        action_obj = action()
-        action_obj.validate(body)
+        action_obj = action_class()
         try:
-            return action_obj.run(**body)
+            deserialized_body = action_obj.validate(body)
+            return action_obj.run(**deserialized_body)
         except ActionError as e:
             raise CallActionError(str(e), **e.__dict__)
-        except Exception:
-            raise ServerError()
+        except ValidationError as e:
+            raise ServerError(
+                f'Error validating the call to "{service}" service in action "{action}". '
+                f'ValidationError: {str(e)}'
+            )
+        except Exception as e:
+            raise ServerError(
+                f'Error during the call to "{service}" service in action "{action}". '
+                f'{str(type(e))}: {str(e)}'
+            )

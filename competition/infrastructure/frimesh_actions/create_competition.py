@@ -1,5 +1,4 @@
-from datetime import datetime
-
+from frimesh import fields, Schema
 from frimesh.action import FrimeshAction
 from frimesh.exceptions import ActionError
 
@@ -7,19 +6,23 @@ from competition.application.competition_creator import CompetitionCreator
 from competition.application.exceptions import CompetitionApplicationError
 
 
+class OrganizerSchema(Schema):
+    name = fields.Str()
+    last_name = fields.Str()
+    aka = fields.Str()
+    _id = fields.Str()
+
+
+class CreateCompetitionSchema(Schema):
+    name = fields.Str()
+    date = fields.DateTime()
+    open_inscription_during_competition = fields.Boolean()
+    organizer = fields.Nested(OrganizerSchema())
+
+
 class CreateCompetitionAction(FrimeshAction):
 
-    schema = {
-        'name': str,
-        'date': datetime,
-        'open_inscription_during_competition': bool,
-        'organizer': {
-            'name': str,
-            'last_name': str,
-            'aka': str,
-            '_id': str
-        }
-    }
+    schema = CreateCompetitionSchema
 
     def run(
         self, organizer, name, date, open_inscription_during_competition, **kwargs

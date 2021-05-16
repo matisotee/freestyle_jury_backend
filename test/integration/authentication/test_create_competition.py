@@ -35,7 +35,7 @@ def test_create_competition_successfully(authenticated_client, now_date):
     with container.service_caller.override(mock_service_caller):
         response = authenticated_client.post('/competitions/', payload)
 
-    assert response.status_code == status.HTTP_201_CREATED
+    assert response.status_code == status.HTTP_200_OK
     assert response.data == {
        'name': "Rapublik",
        'status': 'created'
