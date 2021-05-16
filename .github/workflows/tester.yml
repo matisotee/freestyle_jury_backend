@@ -11,8 +11,8 @@ jobs:
       PYTHON: '3.8'
     steps:
     - uses: actions/checkout@master
-#      with:
-#        fetch-depth: '0'
+      with:
+        fetch-depth: '0'
     # TEST
     - name: Set up Python 3.x
       uses: actions/setup-python@v2
