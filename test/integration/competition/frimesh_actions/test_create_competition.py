@@ -17,7 +17,7 @@ def test_create_competition_successfully(frimesh_client):
     date_now_plus_an_hour = date_now + datetime.timedelta(hours=1)
     payload = {
         'name': "Rapublik",
-        'date': date_now_plus_an_hour,
+        'date': date_now_plus_an_hour.isoformat(),
         'open_inscription_during_competition': True,
         'organizer': {
             'name': 'Juan',
