@@ -2,13 +2,13 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.db import IntegrityError
 from djongo import models
 
-from authentication.firebase_connector import FirebaseConnector
+from authentication.infrastructure.authentication.firebase_auth_provider import FirebaseAuthProvider
 
 
 class UserManager(BaseUserManager):
 
     def create_user_by_token(self, token, name, last_name, aka=''):
-        payload = FirebaseConnector.get_user_info_by_firebase_token(token)
+        payload = FirebaseAuthProvider.get_user_info_by_firebase_token(token)
         return self.create_user(payload['uid'], name, last_name, aka)
 
     def create_user(self, uid, name, last_name, aka=''):

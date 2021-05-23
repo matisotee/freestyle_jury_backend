@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from authentication.application.exceptions import CallServiceError
+from authentication.application.exceptions.services import CallServiceError
 
 
 class RequestSerializerMissingError(Exception):

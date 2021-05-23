@@ -4,7 +4,7 @@ import pytest
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 
-from authentication.firebase_connector import FirebaseConnector
+from authentication.infrastructure.authentication.firebase_auth_provider import FirebaseAuthProvider
 from authentication.models import User, UserManager
 
 
@@ -69,7 +69,7 @@ def test_create_existent_user_fails(mock_save, mock_filter, user_parameters):
 
 
 @patch.object(
-    FirebaseConnector,
+    FirebaseAuthProvider,
     'get_user_info_by_firebase_token',
     return_value={'uid': 'test_uid'}
 )

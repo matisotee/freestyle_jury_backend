@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from authentication.application.create_competition import CreateCompetitionService
-from authentication.authenticator import FirebaseAuthentication
+from authentication.infrastructure.authentication.django_authentication import DjangoAuthentication
 from authentication.infrastructure.utils import custom_serializers
 from authentication.infrastructure.utils.api_views import validate_request_and_response
 
@@ -21,7 +21,7 @@ class CreateCompetitionResponseSerializer(serializers.Serializer):
 
 class CreateCompetitionView(APIView):
     """Create a new competition"""
-    authentication_classes = [FirebaseAuthentication]
+    authentication_classes = [DjangoAuthentication]
     permission_classes = [IsAuthenticated]
     request_serializer_class = CreateCompetitionRequestSerializer
     response_serializer_class = CreateCompetitionResponseSerializer

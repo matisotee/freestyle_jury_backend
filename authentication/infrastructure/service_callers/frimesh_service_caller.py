@@ -1,10 +1,10 @@
+from frimesh.client import FrimeshClient
 from frimesh.exceptions import CallActionError
 
 from app.frimesh_services_map import services_map
-from authentication.application.exceptions import CallServiceError
-from authentication.domain.service_caller import ServiceCaller
 
-from frimesh.client import FrimeshClient
+from authentication.application.exceptions.services import CallServiceError
+from authentication.domain.service_caller import ServiceCaller
 
 
 class FrimeshServiceCaller(ServiceCaller):

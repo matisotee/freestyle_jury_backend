@@ -56,7 +56,7 @@ REST_FRAMEWORK = {
     'NON_FIELD_ERRORS_KEY': 'error',
     'EXCEPTION_HANDLER': 'app.exception_handler.custom_exception_handler',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'authentication.authenticator.FirebaseAuthentication',
+        'authentication.infrastructure.authentication.django_authentication.DjangoAuthentication',
     )
 }
 
