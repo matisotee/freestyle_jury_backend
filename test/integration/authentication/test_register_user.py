@@ -22,9 +22,9 @@ def test_register_user_successfully(mock_ff, firebase_user, client):
         'token': firebase_user.token,
     }
 
-    response = client.post(REGISTER_USER_URL, payload)
+    response = client.post(REGISTER_USER_URL, payload, format='json')
 
-    assert response.status_code == status.HTTP_201_CREATED
+    assert response.status_code == 200
     assert response.data == {
         'name': 'Test Name',
         'last_name': 'Last Name',

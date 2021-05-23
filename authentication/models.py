@@ -1,20 +1,15 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.db import IntegrityError
 from djongo import models
 
-from authentication.infrastructure.authentication.firebase_auth_provider import FirebaseAuthProvider
+from authentication.domain.exceptions.user import ExistingUserError
 
 
 class UserManager(BaseUserManager):
 
-    def create_user_by_token(self, token, name, last_name, aka=''):
-        payload = FirebaseAuthProvider.get_user_info_by_firebase_token(token)
-        return self.create_user(payload['uid'], name, last_name, aka)
-
     def create_user(self, uid, name, last_name, aka=''):
         """Creates and saves a new user"""
         if self.filter(uid=uid).exists():
-            raise IntegrityError
+            raise ExistingUserError()
 
         user = self.model(uid=uid, name=name, last_name=last_name, aka=aka)
 
