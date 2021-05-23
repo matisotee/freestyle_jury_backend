@@ -54,7 +54,7 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = {
     'NON_FIELD_ERRORS_KEY': 'error',
-    'EXCEPTION_HANDLER': 'app.exception_handler.custom_exception_handler',
+    'EXCEPTION_HANDLER': 'authentication.infrastructure.controllers.base.custom_exception_handler',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'authentication.infrastructure.authentication.django_authentication.DjangoAuthentication',
     )

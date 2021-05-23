@@ -5,7 +5,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 from authentication.infrastructure.controllers.create_competition import CreateCompetitionView
-from authentication.views.register_user import RegisterUserView
+from authentication.infrastructure.controllers.register_user import RegisterUserView
 
 schema_view = get_schema_view(
     openapi.Info(
