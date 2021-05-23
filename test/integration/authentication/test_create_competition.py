@@ -6,7 +6,7 @@ import pytz
 
 from rest_framework import status
 
-from authentication.application.exceptions import CallServiceError
+from authentication.application.exceptions.services import CallServiceError
 from authentication.dependency_injection import container
 
 

@@ -7,14 +7,15 @@ from firebase_admin import auth
 from rest_framework.test import APIClient
 
 from app.frimesh_services_map import services_map
-from authentication.firebase_connector import FirebaseConnector
+from authentication.infrastructure.authentication.firebase_auth_provider import FirebaseAuthProvider
+
 from authentication.models import User
 from frimesh.client import FrimeshClient
 
 
 def initialize_firebase():
-    if not FirebaseConnector.is_initialized:
-        FirebaseConnector.initialize_credentials()
+    if not FirebaseAuthProvider.is_initialized:
+        FirebaseAuthProvider.initialize_credentials()
 
 
 def verified_firebase_login_info():
