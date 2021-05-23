@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg',
-    'authentication',
+    'api_gateway',
     'competition'
 ]
 
@@ -54,13 +54,13 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = {
     'NON_FIELD_ERRORS_KEY': 'error',
-    'EXCEPTION_HANDLER': 'authentication.infrastructure.controllers.base.custom_exception_handler',
+    'EXCEPTION_HANDLER': 'api_gateway.infrastructure.controllers.base.custom_exception_handler',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'authentication.infrastructure.authentication.django_authentication.DjangoAuthentication',
+        'api_gateway.infrastructure.authentication.django_authentication.DjangoAuthentication',
     )
 }
 
-ROOT_URLCONF = 'authentication.urls'
+ROOT_URLCONF = 'api_gateway.urls'
 
 TEMPLATES = [
     {
@@ -142,7 +142,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-AUTH_USER_MODEL = 'authentication.User'
+AUTH_USER_MODEL = 'api_gateway.User'
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
