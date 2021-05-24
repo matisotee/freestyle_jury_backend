@@ -1,12 +1,7 @@
 from django.conf import settings
 from optimizely import optimizely
 
-# FEATURE FLAG CLIENT CONTRACT
-# class FeatureFlags:
-#
-#     def is_feature_enabled(self, feature_flag_key, user_dict=None):
-#
-#     def get_feature_variable(self, feature_flag_key, variable_key, user_dict=None):
+REGISTER_ENDPOINT = 'register_endpoint'
 
 
 class OptimizelyFeatureFlags:

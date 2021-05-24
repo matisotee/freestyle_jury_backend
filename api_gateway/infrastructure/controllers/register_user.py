@@ -10,8 +10,7 @@ from api_gateway.infrastructure.documentation.register_user_view import (
 )
 from api_gateway.infrastructure.controllers.base import BaseAPIView, CharField
 
-from utils import feature_flags
-from utils.feature_flags.clients import FeatureFlagManager
+from app.feature_flags import FeatureFlagManager, REGISTER_ENDPOINT
 
 
 class RegisterUserRequestSerializer(serializers.Serializer):
@@ -49,7 +48,7 @@ class RegisterUserView(BaseAPIView):
     def post(self, request, *args, **kwargs):
 
         if not FeatureFlagManager.is_feature_enabled(
-            feature_flags.REGISTER_ENDPOINT
+            REGISTER_ENDPOINT
         ):
             raise PermissionDenied(
                 'Feature flag disabled for this user',
