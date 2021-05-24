@@ -1,7 +1,7 @@
 from frimesh.client import FrimeshClient
 from frimesh.exceptions import CallActionError
 
-from app.frimesh_services_map import services_map
+from shared.frimesh_services_map import services_map
 
 from api_gateway.application.exceptions.services import CallServiceError
 from api_gateway.domain.service_caller import ServiceCaller
