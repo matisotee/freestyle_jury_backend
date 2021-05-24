@@ -8,8 +8,8 @@ from api_gateway.application.register_user import UserRegistrar
 from api_gateway.infrastructure.documentation.register_user_view import (
     RESPONSE_201, RESPONSE_400, RESPONSE_401, RESPONSE_403
 )
-from api_gateway.infrastructure.controllers.base import BaseAPIView
-from api_gateway.infrastructure.utils.custom_serializers import CharField
+from api_gateway.infrastructure.controllers.base import BaseAPIView, CharField
+
 from utils import feature_flags
 from utils.feature_flags.clients import FeatureFlagManager
 
