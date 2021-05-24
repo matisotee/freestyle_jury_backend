@@ -1,11 +1,11 @@
 from unittest.mock import patch, MagicMock
 
-from utils.feature_flags.clients import OptimizelyFeatureFlags, FeatureFlagManager
+from app.feature_flags import OptimizelyFeatureFlags, FeatureFlagManager
 
 
 # OptimizelyFeatureFlagsTest
 
-@patch('utils.feature_flags.clients.optimizely')
+@patch('app.feature_flags.optimizely')
 def test_get_client_and_optimizely_parameters_without_user(mock_optimizely):
     mock_optimizely.Optimizely.return_value = 'client'
 
@@ -14,7 +14,7 @@ def test_get_client_and_optimizely_parameters_without_user(mock_optimizely):
     assert result == ('client', '', None)
 
 
-@patch('utils.feature_flags.clients.optimizely')
+@patch('app.feature_flags.optimizely')
 def test_get_client_and_optimizely_parameters_with_user(mock_optimizely):
     mock_optimizely.Optimizely.return_value = 'client'
 

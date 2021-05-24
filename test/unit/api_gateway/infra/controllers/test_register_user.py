@@ -4,7 +4,7 @@ import pytest
 from api_gateway.application.exceptions.registration import RegistrationError
 from api_gateway.application.register_user import UserRegistrar
 from api_gateway.infrastructure.controllers.base import ResponseError
-from utils.feature_flags.clients import FeatureFlagManager
+from app.feature_flags import FeatureFlagManager
 
 
 @pytest.mark.usefixtures("client")

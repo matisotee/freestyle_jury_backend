@@ -1,10 +1,8 @@
 from unittest.mock import patch
 import pytest
 
-from rest_framework import status
-
 from api_gateway.models import User
-from utils.feature_flags.clients import FeatureFlagManager
+from app.feature_flags import FeatureFlagManager
 
 REGISTER_USER_URL = '/auth/register/'
 
