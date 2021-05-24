@@ -10,7 +10,7 @@ from api_gateway.infrastructure.documentation.register_user_view import (
 )
 from api_gateway.infrastructure.controllers.base import BaseAPIView, CharField
 
-from app.feature_flags import FeatureFlagManager, REGISTER_ENDPOINT
+from shared.feature_flags import FeatureFlagManager, REGISTER_ENDPOINT
 
 
 class RegisterUserRequestSerializer(serializers.Serializer):

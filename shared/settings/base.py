@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 from datetime import timedelta
 
-from app.settings import get_env_variable, get_env_variable_or_none
+from shared.settings import get_env_variable, get_env_variable_or_none
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -78,7 +78,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'app.wsgi.application'
+WSGI_APPLICATION = 'shared.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
