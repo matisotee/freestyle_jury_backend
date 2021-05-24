@@ -1,17 +1,18 @@
-from api_gateway.application.exceptions.registration import RegistrationError
-from api_gateway.dependency_injection import Container
-from api_gateway.domain.auth_provider import AuthProvider
 from dependency_injector.wiring import inject, Provide
 
-from api_gateway.dependency_injection.decorators import wire
-from api_gateway.domain.exceptions.auth_provider import InvalidTokenError, NotVerifiedEmailError
+from shared.dependency_injection.container import Container
+
+from api_gateway.application.exceptions.registration import RegistrationError
+from api_gateway.domain.auth_provider import AuthProvider
+from api_gateway.domain.exceptions.auth_provider import (
+    InvalidTokenError, NotVerifiedEmailError,
+)
 from api_gateway.domain.exceptions.user import ExistingUserError
 from api_gateway.models import User
 
 
 class UserRegistrar:
 
-    @wire
     @inject
     def __init__(self, auth_provider: AuthProvider = Provide[Container.auth_provider]):
         self._auth_provider = auth_provider

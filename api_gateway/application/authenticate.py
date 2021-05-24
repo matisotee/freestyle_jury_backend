@@ -2,6 +2,8 @@ from dependency_injector.wiring import (
     Provide, inject,
 )
 
+from shared.dependency_injection.container import Container
+
 from api_gateway.application.exceptions.authentication import AuthenticationError
 from api_gateway.domain.auth_provider import AuthProvider
 from api_gateway.domain.exceptions.auth_provider import (
@@ -9,14 +11,11 @@ from api_gateway.domain.exceptions.auth_provider import (
     NotVerifiedEmailError,
 )
 from api_gateway.models import User
-from api_gateway.dependency_injection.containers import Container
-from api_gateway.dependency_injection.decorators import wire
 
 
 class AuthenticationService:
 
     # TODO: Move dependency injection to infrastructure layer
-    @wire
     @inject
     def __init__(self, auth_provider: AuthProvider = Provide[Container.auth_provider]):
         self._auth_provider = auth_provider

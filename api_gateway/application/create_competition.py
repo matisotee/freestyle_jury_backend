@@ -2,15 +2,13 @@ from dependency_injector.wiring import (
     Provide, inject,
 )
 
-from api_gateway.dependency_injection.containers import Container
-from api_gateway.dependency_injection.decorators import wire
+from shared.dependency_injection.container import Container
 
 from api_gateway.domain.service_caller import ServiceCaller
 
 
 class CreateCompetitionService:
 
-    @wire
     @inject
     def __init__(self, service_caller: ServiceCaller = Provide[Container.service_caller]):
         self.service_caller = service_caller

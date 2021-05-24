@@ -1,13 +1,12 @@
 import datetime
 from unittest.mock import MagicMock
-
 import pytest
 import pytz
-
 from rest_framework import status
 
+from shared.dependency_injection import container
+
 from api_gateway.application.exceptions.services import CallServiceError
-from api_gateway.dependency_injection import container
 
 
 @pytest.fixture
