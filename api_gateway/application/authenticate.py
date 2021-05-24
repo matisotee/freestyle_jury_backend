@@ -23,9 +23,8 @@ class AuthenticationService:
 
     def authenticate(self, auth_token):
         try:
-            # TODO: Convert uid to provider_id in the model
-            provider_user_id = self._auth_provider.get_user_id(auth_token)
-            user = User.objects.get(uid=provider_user_id)
+            provider_user_data = self._auth_provider.get_user_data(auth_token)
+            user = User.objects.get(provider_id=provider_user_data.id)
             user._id = str(user._id)
             return user
         except InvalidTokenError as e:

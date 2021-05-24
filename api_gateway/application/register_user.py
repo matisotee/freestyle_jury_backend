@@ -18,8 +18,15 @@ class UserRegistrar:
 
     def register_user(self, name: str, last_name: str, token: str, aka: str = '') -> dict:
         try:
-            provider_user_id = self._auth_provider.get_user_id(token)
-            user = User.objects.create_user(provider_user_id, name, last_name, aka)
+            provider_user_data = self._auth_provider.get_user_data(token)
+            user = User.objects.create_user(
+                provider_user_data.id,
+                name,
+                last_name,
+                provider_user_data.email,
+                provider_user_data.phone_number,
+                aka
+            )
         except InvalidTokenError as e:
             raise RegistrationError(str(e), 'INVALID_TOKEN')
         except NotVerifiedEmailError as e:
@@ -32,7 +39,10 @@ class UserRegistrar:
     @staticmethod
     def _map_user_to_dict(user):
         return {
+            'id': str(user._id),
             'name': user.name,
             'last_name': user.last_name,
+            'email': user.email,
+            'phone_number': user.phone_number,
             'aka': user.aka
         }
