@@ -13,8 +13,11 @@ from utils.feature_flags.clients import FeatureFlagManager
 def test_register_user_successfully(mock_ff, mock_register_user, client):
     """Test register user with valid payload is successful"""
     mock_register_user.return_value = {
+        'id': '1234',
         'name': 'test_name',
         'last_name': 'test_last_name',
+        'email': 'test@test.com',
+        'phone_number': '',
         'aka': 'test_aka'
     }
     payload = {
@@ -28,8 +31,11 @@ def test_register_user_successfully(mock_ff, mock_register_user, client):
 
     assert response.status_code == 200
     assert response.data == {
+        'id': '1234',
         'name': 'test_name',
         'last_name': 'test_last_name',
+        'email': 'test@test.com',
+        'phone_number': '',
         'aka': 'test_aka'
     }
 

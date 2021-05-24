@@ -22,8 +22,11 @@ class RegisterUserRequestSerializer(serializers.Serializer):
 
 
 class RegisterUserResponseSerializer(serializers.Serializer):
+    id = CharField(max_length=255,)
     name = CharField(max_length=255, required=True)
     last_name = CharField(max_length=255, required=True)
+    email = CharField(max_length=255, allow_blank=True, allow_null=True)
+    phone_number = CharField(max_length=255, allow_blank=True, allow_null=True)
     aka = CharField(max_length=25, required=False)
 
 

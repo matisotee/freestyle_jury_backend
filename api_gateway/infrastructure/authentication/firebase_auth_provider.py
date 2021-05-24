@@ -1,6 +1,6 @@
 from django.conf import settings
 from firebase_admin import auth, credentials, initialize_app
-from api_gateway.domain.auth_provider import AuthProvider
+from api_gateway.domain.auth_provider import AuthProvider, ProviderUserData
 from api_gateway.domain.exceptions.auth_provider import InvalidTokenError, NotVerifiedEmailError
 
 
@@ -8,7 +8,7 @@ class FirebaseAuthProvider(AuthProvider):
 
     is_initialized = False
 
-    def get_user_id(self, token: str) -> str:
+    def get_user_data(self, token: str) -> ProviderUserData:
         """
         Returns a firebase user id that matches the token
         """
@@ -22,7 +22,13 @@ class FirebaseAuthProvider(AuthProvider):
         if settings.FIREBASE_AUTH['EMAIL_VERIFICATION'] and not firebase_user.email_verified:
             raise NotVerifiedEmailError('Firebase')
 
-        return payload['uid']
+        user_data = ProviderUserData(
+            id=firebase_user.uid,
+            email=firebase_user.email if firebase_user.email is not None else '',
+            phone_number=firebase_user.phone_number if firebase_user.phone_number is not None else ''
+        )
+
+        return user_data
 
     @classmethod
     def initialize_credentials(cls):

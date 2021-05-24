@@ -4,6 +4,7 @@ import pytest
 
 from api_gateway.application.exceptions.registration import RegistrationError
 from api_gateway.application.register_user import UserRegistrar
+from api_gateway.domain.auth_provider import ProviderUserData
 from api_gateway.domain.exceptions.auth_provider import InvalidTokenError, NotVerifiedEmailError
 from api_gateway.models import UserManager, User
 
@@ -15,24 +16,26 @@ def test_register_user(mock_filter, mock_save, mock_clean):
     mock_filter.return_value.exists.return_value = False
     registrar = UserRegistrar()
     mock_provider = MagicMock()
-    mock_provider.get_user_id.return_value = '1234'
+    mock_provider.get_user_data.return_value = ProviderUserData(
+        id='1234', email='test@test.com', phone_number=''
+    )
     registrar._auth_provider = mock_provider
 
     result = registrar.register_user(
         'test_name', 'test_last_name', 'test_token', 'test_aka'
     )
 
-    assert result == {
-        'name': 'test_name',
-        'last_name': 'test_last_name',
-        'aka': 'test_aka'
-    }
+    assert result['name'] == 'test_name'
+    assert result['last_name'] == 'test_last_name'
+    assert result['aka'] == 'test_aka'
+    assert result['email'] == 'test@test.com'
+    assert result['phone_number'] == ''
 
 
 def test_register_user_with_invalid_token():
     registrar = UserRegistrar()
     mock_provider = MagicMock()
-    mock_provider.get_user_id.side_effect = InvalidTokenError('test_provider')
+    mock_provider.get_user_data.side_effect = InvalidTokenError('test_provider')
     registrar._auth_provider = mock_provider
 
     with pytest.raises(RegistrationError) as ex_info:
@@ -47,7 +50,7 @@ def test_register_user_with_invalid_token():
 def test_register_user_with_not_verified_user():
     registrar = UserRegistrar()
     mock_provider = MagicMock()
-    mock_provider.get_user_id.side_effect = NotVerifiedEmailError('test_provider')
+    mock_provider.get_user_data.side_effect = NotVerifiedEmailError('test_provider')
     registrar._auth_provider = mock_provider
 
     with pytest.raises(RegistrationError) as ex_info:
@@ -66,7 +69,9 @@ def test_register_user_with_existent_user(mock_filter, mock_save, mock_clean):
     mock_filter.return_value.exists.return_value = True
     registrar = UserRegistrar()
     mock_provider = MagicMock()
-    mock_provider.get_user_id.return_value = '1234'
+    mock_provider.get_user_data.return_value = ProviderUserData(
+        id='1234', email='test@test.com', phone_number=''
+    )
     registrar._auth_provider = mock_provider
 
     with pytest.raises(RegistrationError) as ex_info:

@@ -12,7 +12,8 @@ from api_gateway.models import User
 @patch.object(AuthenticationService, 'authenticate')
 def test_authenticate(mock_authenticate):
     expected_user = User(
-        _id='5678', uid='1234', name='test', last_name='test', aka='tes'
+        _id='5678', provider_id='1234', name='test', last_name='test',
+        email='test@test.com', phone_number='1234567', aka='tes'
     )
     mock_authenticate.return_value = expected_user
     factory = RequestFactory()
