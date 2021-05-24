@@ -1,5 +1,3 @@
-import logging
-import time
 from api_gateway.application.exceptions.registration import RegistrationError
 from api_gateway.dependency_injection import Container
 from api_gateway.domain.auth_provider import AuthProvider
