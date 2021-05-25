@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from api_gateway.application.create_competition import CreateCompetitionService
-from api_gateway.application.exceptions.services import CallServiceError
+from api_gateway.application.exceptions.competition import CreateCompetitionError
 from api_gateway.infrastructure.authentication.django_authentication import DjangoAuthentication
 from api_gateway.infrastructure.controllers.base import BaseAPIView, CharField
 
@@ -35,5 +35,5 @@ class CreateCompetitionView(BaseAPIView):
                 **request.data, authenticated_user=request.user.__dict__
             )
             return Response(response)
-        except CallServiceError as e:
+        except CreateCompetitionError as e:
             raise ValidationError(e.message, code=e.code)

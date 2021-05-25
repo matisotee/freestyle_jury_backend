@@ -1,4 +1,7 @@
+import datetime
+
 import pytest
+import pytz
 import requests
 from bson import ObjectId
 from django.conf import settings
@@ -85,9 +88,33 @@ class AuthenticatedAPIClient(APIClient):
         return cls.instance
 
 
+class MockAuthenticatedAPIClient(APIClient):
+
+    instance = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        user = User(
+            _id='5678', provider_id='1234', name='test', last_name='test',
+            email='test@test.com', phone_number='1234567', aka='tes'
+        )
+        self.force_authenticate(user=user)
+
+    @classmethod
+    def get_instance(cls):
+        if not cls.instance:
+            cls.instance = MockAuthenticatedAPIClient()
+        return cls.instance
+
+
 @pytest.fixture
 def authenticated_client():
     return AuthenticatedAPIClient.get_instance()
+
+
+@pytest.fixture
+def mock_authenticated_client():
+    return MockAuthenticatedAPIClient.get_instance()
 
 
 @pytest.fixture
@@ -102,3 +129,12 @@ def frimesh_client():
 
 def generate_object_id():
     return str(ObjectId())
+
+
+@pytest.fixture
+def now_date():
+    date_now = datetime.datetime.now(tz=datetime.timezone.utc).astimezone(
+        pytz.timezone('America/Argentina/Buenos_Aires')
+    )
+    date_now_plus_an_hour = date_now + datetime.timedelta(hours=1)
+    return date_now_plus_an_hour.isoformat()
