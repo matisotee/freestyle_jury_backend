@@ -4,13 +4,8 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from shared.dependency_injection import container
-from shared.dependency_injection.config import INJECTED_MODULES
-
 from api_gateway.infrastructure.controllers.create_competition import CreateCompetitionView
 from api_gateway.infrastructure.controllers.register_user import RegisterUserView
-
-container.wire(modules=INJECTED_MODULES)
 
 schema_view = get_schema_view(
     openapi.Info(

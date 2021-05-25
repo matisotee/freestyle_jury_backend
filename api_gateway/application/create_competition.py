@@ -4,6 +4,8 @@ from dependency_injector.wiring import (
 
 from shared.dependency_injection.container import Container
 
+from api_gateway.application.exceptions.competition import CreateCompetitionError
+from api_gateway.domain.exceptions.services import CallServiceError
 from api_gateway.domain.service_caller import ServiceCaller
 
 
@@ -15,15 +17,18 @@ class CreateCompetitionService:
 
     def create_competition(self, name, date, open_inscription_during_competition, authenticated_user):
 
-        body = {
-            'name': name,
-            'date': date,
-            'open_inscription_during_competition': open_inscription_during_competition,
-            'organizer': {
-                'name': authenticated_user['name'],
-                'last_name': authenticated_user['last_name'],
-                'aka': authenticated_user['aka'],
-                '_id': authenticated_user['_id']
+        try:
+            body = {
+                'name': name,
+                'date': date,
+                'open_inscription_during_competition': open_inscription_during_competition,
+                'organizer': {
+                    'name': authenticated_user['name'],
+                    'last_name': authenticated_user['last_name'],
+                    'aka': authenticated_user['aka'],
+                    '_id': authenticated_user['_id']
+                }
             }
-        }
-        return self.service_caller.call('competition', 'create_competition', body)
+            return self.service_caller.call('competition', 'create_competition', body)
+        except CallServiceError as e:
+            raise CreateCompetitionError(message=e.message, code=e.code)
