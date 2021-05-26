@@ -29,6 +29,7 @@ SECRET_KEY = get_env_variable('SECRET_KEY')
 # Application definition
 
 INSTALLED_APPS = [
+    'api_gateway.infrastructure.django.apps.ApiGatewayConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,7 +39,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg',
-    'api_gateway.infrastructure.django.apps.ApiGatewayConfig',
     'competition'
 ]
 

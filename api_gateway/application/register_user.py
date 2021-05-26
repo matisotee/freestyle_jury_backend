@@ -8,7 +8,7 @@ from api_gateway.domain.exceptions.auth_provider import (
     InvalidTokenError, NotVerifiedEmailError,
 )
 from api_gateway.domain.exceptions.user import ExistingUserError
-from api_gateway.models import User
+from api_gateway.domain.models import User
 
 
 class UserRegistrar:

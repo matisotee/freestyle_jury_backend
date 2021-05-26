@@ -19,6 +19,7 @@ class UserManager(BaseUserManager):
             phone_number=phone_number,
             aka=aka
         )
+        user.set_unusable_password()
 
         # Validate model and raise an exception if the data doesn't fit
         user.clean_fields()
@@ -42,6 +43,8 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     """Custom user model"""
+    class Meta:
+        app_label = 'api_gateway'
     _id = models.ObjectIdField(db_column='_id')
     provider_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=25,)
@@ -49,7 +52,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.CharField(max_length=200, blank=True)
     phone_number = models.CharField(max_length=25, blank=True)
     aka = models.CharField(max_length=25, blank=True)
-    password = models.CharField(max_length=25, blank=True)
 
     objects = UserManager()
     USERNAME_FIELD = 'provider_id'

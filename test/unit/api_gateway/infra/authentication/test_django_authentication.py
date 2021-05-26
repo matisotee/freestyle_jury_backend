@@ -5,8 +5,8 @@ from rest_framework.exceptions import AuthenticationFailed
 
 from api_gateway.application.authenticate import AuthenticationService
 from api_gateway.application.exceptions.authentication import AuthenticationError
+from api_gateway.domain.models import User
 from api_gateway.infrastructure.authentication.django_authentication import DjangoAuthentication
-from api_gateway.models import User
 
 
 @patch.object(AuthenticationService, 'authenticate')
