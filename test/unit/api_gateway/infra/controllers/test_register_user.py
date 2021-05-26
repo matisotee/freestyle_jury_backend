@@ -27,7 +27,7 @@ def test_register_user_successfully(mock_ff, mock_register_user, client):
         'token': 'test_token',
     }
 
-    response = client.post('/auth/register/', payload, format='json')
+    response = client.post('/users/', payload, format='json')
 
     assert response.status_code == 200
     assert response.data == {
@@ -52,7 +52,7 @@ def test_register_user_with_registration_error(mock_ff, mock_register_user, clie
         'token': 'test_token',
     }
 
-    response = client.post('/auth/register/', payload, format='json')
+    response = client.post('/users/', payload, format='json')
 
     assert response.status_code == 400
     assert response.data['error_code'] == 'TEST_CODE'
@@ -67,7 +67,7 @@ def test_register_user_with_request_schema_error(mock_ff, client):
         'aka': 'test',
     }
 
-    response = client.post('/auth/register/', payload, format='json')
+    response = client.post('/users/', payload, format='json')
 
     assert response.status_code == 400
     assert response.data['error_code'] == 'FIELDS_ERROR'
@@ -89,4 +89,4 @@ def test_register_user_with_response_schema_error(mock_ff, mock_register_user, c
     }
 
     with pytest.raises(ResponseError):
-        client.post('/auth/register/', payload, format='json')
+        client.post('/users/', payload, format='json')
