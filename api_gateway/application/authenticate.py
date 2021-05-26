@@ -10,7 +10,7 @@ from api_gateway.domain.exceptions.auth_provider import (
     InvalidTokenError,
     NotVerifiedEmailError,
 )
-from api_gateway.models import User
+from api_gateway.domain.models import User
 
 
 class AuthenticationService:
@@ -24,6 +24,7 @@ class AuthenticationService:
         try:
             provider_user_data = self._auth_provider.get_user_data(auth_token)
             user = User.objects.get(provider_id=provider_user_data.id)
+            user.set_unusable_password()
             user._id = str(user._id)
             return user
         except InvalidTokenError as e:

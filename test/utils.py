@@ -12,7 +12,7 @@ from rest_framework.test import APIClient
 from shared.frimesh_services_map import services_map
 from api_gateway.infrastructure.authentication.firebase_auth_provider import FirebaseAuthProvider
 
-from api_gateway.models import User
+from api_gateway.domain.models import User
 from frimesh.client import FrimeshClient
 
 

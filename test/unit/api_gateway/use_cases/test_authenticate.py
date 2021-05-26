@@ -6,7 +6,7 @@ from api_gateway.application.authenticate import AuthenticationService
 from api_gateway.application.exceptions.authentication import AuthenticationError
 from api_gateway.domain.auth_provider import ProviderUserData
 from api_gateway.domain.exceptions.auth_provider import InvalidTokenError, NotVerifiedEmailError
-from api_gateway.models import UserManager, User
+from api_gateway.domain.models import UserManager, User
 
 
 @patch.object(UserManager, 'get')
