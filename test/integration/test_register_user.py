@@ -4,7 +4,7 @@ import pytest
 from api_gateway.domain.models import User
 from shared.feature_flags import FeatureFlagManager
 
-REGISTER_USER_URL = '/auth/register/'
+REGISTER_USER_URL = '/users/'
 
 
 @pytest.mark.django_db

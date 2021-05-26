@@ -20,8 +20,8 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 
-auth_patterns = [
-    path('register/', RegisterUserView.as_view(), name='register_user'),
+users_patterns = [
+    path('', RegisterUserView.as_view(), name='register_user'),
 ]
 
 competition_patterns = [
@@ -32,6 +32,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path('auth/', include(auth_patterns)),
+    path('users/', include(users_patterns)),
     path('competitions/', include(competition_patterns)),
 ]
