@@ -6,18 +6,11 @@ from competition.application.competition_creator import CompetitionCreator
 from competition.application.exceptions import CompetitionApplicationError
 
 
-class OrganizerSchema(Schema):
-    name = fields.Str()
-    last_name = fields.Str()
-    aka = fields.Str()
-    _id = fields.Str()
-
-
 class CreateCompetitionSchema(Schema):
     name = fields.Str()
     date = fields.DateTime()
     open_inscription_during_competition = fields.Boolean()
-    organizer = fields.Nested(OrganizerSchema())
+    organizer_id = fields.Str()
 
 
 class CreateCompetitionAction(FrimeshAction):
@@ -25,11 +18,11 @@ class CreateCompetitionAction(FrimeshAction):
     schema = CreateCompetitionSchema
 
     def run(
-        self, organizer, name, date, open_inscription_during_competition, **kwargs
+        self, organizer_id, name, date, open_inscription_during_competition, **kwargs
     ):
         try:
             response = CompetitionCreator.create_competition(
-                organizer,
+                organizer_id,
                 name,
                 date,
                 open_inscription_during_competition

@@ -1,18 +1,16 @@
 from djongo import models
 
-from competition.domain.models.base import BaseModel, BaseManager
 from competition.domain.models.competition import Competition
+from shared.models.base import BaseModel, BaseManager
 
 
 class OrganizerManager(BaseManager):
 
-    def get_or_create(self, _id, name, last_name, aka=''):
+    def get_or_create(self, organizer_id):
         try:
-            organizer = self.get(_id=_id)
+            organizer = self.get(_id=organizer_id)
         except Organizer.DoesNotExist:
-            organizer = self.model(
-                _id=_id, name=name, last_name=last_name, aka=aka,
-            )
+            organizer = self.model(_id=organizer_id)
             # Validate model and raise an exception if the data doesn't fit
             organizer.full_clean()
             organizer.save()
@@ -20,9 +18,6 @@ class OrganizerManager(BaseManager):
 
 
 class Organizer(BaseModel):
-    name = models.CharField(max_length=25)
-    last_name = models.CharField(max_length=25)
-    aka = models.CharField(max_length=25, blank=True)
     competitions = models.ArrayReferenceField(
         to=Competition,
         blank=True,
