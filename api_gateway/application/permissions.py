@@ -64,4 +64,3 @@ class DefaultPermissionManager:
             accessed_object_type: str,
     ):
         return False
-
