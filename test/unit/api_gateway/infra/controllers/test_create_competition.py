@@ -5,6 +5,7 @@ from rest_framework import status
 from api_gateway.application.create_competition import CreateCompetitionService
 from api_gateway.application.exceptions.competition import CreateCompetitionError
 from api_gateway.infrastructure.controllers.base import ResponseError
+from test.utils import generate_object_id
 
 
 @pytest.mark.usefixtures("now_date")
@@ -14,8 +15,9 @@ def test_create_competition_successfully(
         mock_create_competition, mock_authenticated_client, now_date
 ):
     expected_response = {
-       'name': "Rapublik",
-       'status': 'created'
+        'name': "Rapublik",
+        'status': 'created',
+        'id': generate_object_id()
     }
     mock_create_competition.return_value = expected_response
 
@@ -25,7 +27,7 @@ def test_create_competition_successfully(
        'open_inscription_during_competition': True
     }
 
-    response = mock_authenticated_client.post('/competitions/', payload, format='json')
+    response = mock_authenticated_client.post('/users/me/competitions/', payload, format='json')
 
     assert response.status_code == status.HTTP_200_OK
     assert response.data == expected_response
@@ -48,7 +50,7 @@ def test_create_competition_with_error(
        'open_inscription_during_competition': True
     }
 
-    response = mock_authenticated_client.post('/competitions/', payload, format='json')
+    response = mock_authenticated_client.post('/users/me/competitions/', payload, format='json')
 
     assert response.status_code == 400
     assert response.data['error_code'] == 'TEST_CODE'
@@ -65,7 +67,7 @@ def test_create_competition_with_request_schema_error(
        'open_inscription_during_competition': True
     }
 
-    response = mock_authenticated_client.post('/competitions/', payload, format='json')
+    response = mock_authenticated_client.post('/users/me/competitions/', payload, format='json')
 
     assert response.status_code == 400
     assert response.data['error_code'] == 'FIELDS_ERROR'
@@ -88,4 +90,4 @@ def test_create_competition_with_response_schema_error(
     }
 
     with pytest.raises(ResponseError):
-        mock_authenticated_client.post('/competitions/', payload, format='json')
+        mock_authenticated_client.post('/users/me/competitions/', payload, format='json')

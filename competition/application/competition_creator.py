@@ -6,9 +6,9 @@ from competition.domain.models.organizer import Organizer
 class CompetitionCreator:
 
     @classmethod
-    def create_competition(cls, organizer_dict, name, date, open_inscription_during_competition):
+    def create_competition(cls, organizer_id, name, date, open_inscription_during_competition):
 
-        organizer = Organizer.objects.get_or_create(**organizer_dict)
+        organizer = Organizer.objects.get_or_create(organizer_id)
 
         try:
             competition = organizer.create_competition(
@@ -25,5 +25,6 @@ class CompetitionCreator:
     def _map_competition_to_dict(competition):
         return {
             'name': competition.name,
-            'status': competition.status
+            'status': competition.status,
+            'id': str(competition._id)
         }

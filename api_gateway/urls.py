@@ -1,3 +1,4 @@
+from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import permissions
@@ -21,17 +22,13 @@ schema_view = get_schema_view(
 )
 
 users_patterns = [
-    path('', RegisterUserView.as_view(), name='register_user'),
-]
-
-competition_patterns = [
-    path('', CreateCompetitionView.as_view(), name='create_competition'),
+    path('competitions/', CreateCompetitionView.as_view(), name='create_competition'),
 ]
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path('users/', include(users_patterns)),
-    path('competitions/', include(competition_patterns)),
+    path('users/', RegisterUserView.as_view(), name='register_user'),
+    url(r'^users/(?P<user_id>\w+|me)/', include(users_patterns)),
 ]

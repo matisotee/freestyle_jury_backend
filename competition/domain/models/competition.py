@@ -5,9 +5,9 @@ from djongo import models
 from pytz import utc
 
 from competition.domain.exceptions import CompetitionPastDateError
-from competition.domain.models.base import BaseModel, BaseManager
 from competition.domain.models.competitor import Competitor
 from competition.domain.models.phase import Phase
+from shared.models.base import BaseModel, BaseManager
 
 
 class CompetitionManager(BaseManager):

@@ -79,7 +79,7 @@ def custom_exception_handler(exc, context):
         response.data = data
         return response
     if isinstance(response.data, dict) and response.data.get('detail'):
-        response.data['error_code'] = response.data['detail'].code
+        response.data['error_code'] = response.data['detail'].code.upper()
         return response
     if isinstance(response.data, dict):
         data = {
@@ -96,3 +96,11 @@ def custom_exception_handler(exc, context):
         response.data = data
         return response
     return response
+
+
+def decode_user_id(func):
+    def inner(self, *args, **kwargs):
+        if kwargs.get('user_id', None) == 'me':
+            kwargs['user_id'] = str(self.request.user._id)
+        return func(self, *args, **kwargs)
+    return inner

@@ -12,13 +12,8 @@ from test.utils import generate_object_id
 
 
 @pytest.fixture
-def user_dict():
-    return {
-        'name': 'Test',
-        'last_name': 'Test',
-        'aka': 'T',
-        '_id': generate_object_id(),
-    }
+def organizer_id():
+    return generate_object_id()
 
 
 @pytest.fixture
@@ -43,23 +38,22 @@ def test_create_competition_with_existent_organizer_successfully(
     mock_organizer_competitions,
     mock_save_organizer,
     mock_save_competition,
-    user_dict,
+    organizer_id,
     competition
 ):
 
-    mock_organizer_get.return_value = Organizer(**user_dict)
+    mock_organizer_get.return_value = Organizer(_id=organizer_id)
 
     result = CompetitionCreator.create_competition(
-        user_dict,
+        organizer_id,
         competition.name,
         competition.date,
         competition.open_inscription_during_competition
     )
 
-    assert result == {
-        'name': competition.name,
-        'status': competition.status
-    }
+    assert competition.name == result['name']
+    assert competition.status == result['status']
+    assert 'id' in result
     mock_save_organizer.assert_not_called()
     mock_save_competition.assert_called()
     mock_organizer_competitions.add.assert_called()
@@ -76,23 +70,22 @@ def test_create_competition_with_nonexistent_organizer_successfully(
     mock_organizer_save,
     mock_organizer_competitions,
     mock_competition_save,
-    user_dict,
+    organizer_id,
     competition
 ):
 
     mock_organizer_get.side_effect = Organizer.DoesNotExist()
 
     result = CompetitionCreator.create_competition(
-        user_dict,
+        organizer_id,
         competition.name,
         competition.date,
         competition.open_inscription_during_competition
     )
 
-    assert result == {
-        'name': competition.name,
-        'status': competition.status
-    }
+    assert competition.name == result['name']
+    assert competition.status == result['status']
+    assert 'id' in result
     mock_full_clean.assert_called()
     mock_organizer_save.assert_called()
     mock_organizer_competitions.add.assert_called()
@@ -102,17 +95,17 @@ def test_create_competition_with_nonexistent_organizer_successfully(
 @patch.object(OrganizerManager, 'get')
 def test_create_competition_past_date_fails(
     mock_organizer_get,
-    user_dict,
+    organizer_id,
     competition
 ):
-    mock_organizer_get.return_value = Organizer(**user_dict)
+    mock_organizer_get.return_value = Organizer(_id=organizer_id)
     past_date = datetime.datetime.now().astimezone(
         pytz.timezone('Etc/GMT+3')
     ) - datetime.timedelta(hours=1)
 
     with pytest.raises(CompetitionApplicationError) as ex_info:
         CompetitionCreator.create_competition(
-            user_dict,
+            organizer_id,
             competition.name,
             past_date,
             competition.open_inscription_during_competition

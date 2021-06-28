@@ -13,10 +13,9 @@ def test_create_competition_successfully(authenticated_client, now_date):
        'open_inscription_during_competition': True
     }
 
-    response = authenticated_client.post('/competitions/', payload, format='json')
+    response = authenticated_client.post('/users/me/competitions/', payload, format='json')
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.data == {
-       'name': "Rapublik",
-       'status': 'created'
-    }
+    assert response.data['name'] == 'Rapublik'
+    assert response.data['status'] == 'created'
+    assert 'id' in response.data

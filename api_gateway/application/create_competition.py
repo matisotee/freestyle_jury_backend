@@ -7,6 +7,7 @@ from shared.dependency_injection.container import Container
 from api_gateway.application.exceptions.competition import CreateCompetitionError
 from api_gateway.domain.exceptions.services import CallServiceError
 from api_gateway.domain.service_caller import ServiceCaller
+from api_gateway.domain.models import Permission
 
 
 class CreateCompetitionService:
@@ -15,20 +16,24 @@ class CreateCompetitionService:
     def __init__(self, service_caller: ServiceCaller = Provide[Container.service_caller]):
         self.service_caller = service_caller
 
-    def create_competition(self, name, date, open_inscription_during_competition, authenticated_user):
+    def create_competition(self, name, date, open_inscription_during_competition, organizer_id):
 
         try:
-            body = {
-                'name': name,
-                'date': date,
-                'open_inscription_during_competition': open_inscription_during_competition,
-                'organizer': {
-                    'name': authenticated_user['name'],
-                    'last_name': authenticated_user['last_name'],
-                    'aka': authenticated_user['aka'],
-                    '_id': authenticated_user['_id']
+            competition = self.service_caller.call(
+                'competition',
+                'create_competition',
+                {
+                    'name': name,
+                    'date': date,
+                    'open_inscription_during_competition': open_inscription_during_competition,
+                    'organizer_id': organizer_id
                 }
-            }
-            return self.service_caller.call('competition', 'create_competition', body)
+            )
+            Permission.objects.create(
+                object_id=competition['id'],
+                object_type=Permission.COMPETITION_TYPE,
+                authorized_user_ids=[organizer_id]
+            )
+            return competition
         except CallServiceError as e:
             raise CreateCompetitionError(message=e.message, code=e.code)
