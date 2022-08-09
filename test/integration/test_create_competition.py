@@ -9,8 +9,7 @@ def test_create_competition_successfully(authenticated_client, now_date):
     """Test create a new competition with valid payload is successful"""
     payload = {
        'name': "Rapublik",
-       'date': now_date,
-       'open_inscription_during_competition': True
+       'date': now_date
     }
 
     response = authenticated_client.post('/users/me/competitions/', payload, format='json')

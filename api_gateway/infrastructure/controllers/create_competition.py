@@ -6,13 +6,11 @@ from api_gateway.application.create_competition import CreateCompetitionService
 from api_gateway.application.exceptions.competition import CreateCompetitionError
 from api_gateway.infrastructure.authentication.django_authentication import DjangoAuthentication
 from api_gateway.infrastructure.controllers.base import BaseAPIView, CharField, decode_user_id
-from api_gateway.infrastructure.permissions.django_permissions import DjangoPermissions
 
 
 class CreateCompetitionRequestSerializer(serializers.Serializer):
     name = CharField(max_length=255)
     date = serializers.DateTimeField()
-    open_inscription_during_competition = serializers.BooleanField()
 
 
 class CreateCompetitionResponseSerializer(serializers.Serializer):
@@ -24,7 +22,7 @@ class CreateCompetitionResponseSerializer(serializers.Serializer):
 class CreateCompetitionView(BaseAPIView):
     """Create a new competition"""
     authentication_classes = [DjangoAuthentication]
-    permission_classes = [DjangoPermissions]
+    permission_classes = []
     request_serializer_class = CreateCompetitionRequestSerializer
     response_serializer_class = CreateCompetitionResponseSerializer
 

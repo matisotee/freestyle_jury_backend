@@ -1,5 +1,5 @@
 import datetime
-from unittest.mock import patch
+from unittest.mock import MagicMock
 
 import pytest
 import pytz
@@ -7,13 +7,7 @@ import pytz
 from competition.application.competition_creator import CompetitionCreator
 from competition.application.exceptions import CompetitionApplicationError
 from competition.domain.models.competition import Competition
-from competition.domain.models.organizer import Organizer, OrganizerManager
 from test.utils import generate_object_id
-
-
-@pytest.fixture
-def organizer_id():
-    return generate_object_id()
 
 
 @pytest.fixture
@@ -22,93 +16,42 @@ def competition():
         pytz.timezone('Etc/GMT+3')
     ) + datetime.timedelta(hours=1)
     return Competition(
+        _id=generate_object_id(),
         name='Rapublik',
+        organizer=generate_object_id(),
         date=date,
-        open_inscription_during_competition=True,
         status='created'
     )
 
 
-@patch.object(Competition, 'save')
-@patch.object(Organizer, 'save')
-@patch.object(Organizer, 'competitions')
-@patch.object(OrganizerManager, 'get')
-def test_create_competition_with_existent_organizer_successfully(
-    mock_organizer_get,
-    mock_organizer_competitions,
-    mock_save_organizer,
-    mock_save_competition,
-    organizer_id,
-    competition
-):
+def test_create_competition_successfully(competition):
+    mock_competition_repository = MagicMock()
+    mock_competition_repository.create.return_value = competition
+    creator = CompetitionCreator(competition_repository=mock_competition_repository)
 
-    mock_organizer_get.return_value = Organizer(_id=organizer_id)
-
-    result = CompetitionCreator.create_competition(
-        organizer_id,
-        competition.name,
-        competition.date,
-        competition.open_inscription_during_competition
+    result = creator.create_competition(
+        name=competition.name,
+        date=competition.date,
+        organizer_id=competition.organizer,
     )
 
     assert competition.name == result['name']
     assert competition.status == result['status']
-    assert 'id' in result
-    mock_save_organizer.assert_not_called()
-    mock_save_competition.assert_called()
-    mock_organizer_competitions.add.assert_called()
+    assert str(competition._id) == result['id']
+    assert mock_competition_repository.create.call_args[0][0].name == competition.name
 
 
-@patch.object(Competition, 'save')
-@patch.object(Organizer, 'competitions')
-@patch.object(Organizer, 'save')
-@patch.object(Organizer, 'full_clean')
-@patch.object(OrganizerManager, 'get')
-def test_create_competition_with_nonexistent_organizer_successfully(
-    mock_organizer_get,
-    mock_full_clean,
-    mock_organizer_save,
-    mock_organizer_competitions,
-    mock_competition_save,
-    organizer_id,
-    competition
-):
-
-    mock_organizer_get.side_effect = Organizer.DoesNotExist()
-
-    result = CompetitionCreator.create_competition(
-        organizer_id,
-        competition.name,
-        competition.date,
-        competition.open_inscription_during_competition
-    )
-
-    assert competition.name == result['name']
-    assert competition.status == result['status']
-    assert 'id' in result
-    mock_full_clean.assert_called()
-    mock_organizer_save.assert_called()
-    mock_organizer_competitions.add.assert_called()
-    mock_competition_save.assert_called()
-
-
-@patch.object(OrganizerManager, 'get')
-def test_create_competition_past_date_fails(
-    mock_organizer_get,
-    organizer_id,
-    competition
-):
-    mock_organizer_get.return_value = Organizer(_id=organizer_id)
+def test_create_competition_past_date_fails(competition):
     past_date = datetime.datetime.now().astimezone(
         pytz.timezone('Etc/GMT+3')
     ) - datetime.timedelta(hours=1)
+    creator = CompetitionCreator()
 
     with pytest.raises(CompetitionApplicationError) as ex_info:
-        CompetitionCreator.create_competition(
-            organizer_id,
-            competition.name,
-            past_date,
-            competition.open_inscription_during_competition
+        creator.create_competition(
+            name=competition.name,
+            date=past_date,
+            organizer_id=competition.organizer
         )
     exception = ex_info.value
     assert exception.code == 'PAST_DATE'

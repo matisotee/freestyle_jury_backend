@@ -6,7 +6,7 @@ services:
     environment:
       - MONGO_INITDB_DATABASE=freestyle_jury
     ports:
-      - "27017:27017"
+      - "127.0.0.1:27017:27017/tcp"
   app:
     build: .
     env_file:
@@ -14,7 +14,7 @@ services:
     stdin_open: true
     tty: true
     ports:
-      - "8007:8765"
+      - "127.0.0.1:8007:8765/tcp"
     volumes:
       - .:/app
     depends_on:

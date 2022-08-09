@@ -9,6 +9,7 @@ from django.conf import settings
 from firebase_admin import auth
 from rest_framework.test import APIClient
 
+from api_gateway.infrastructure.repositories.user_repository import MongoUserRepository
 from shared.frimesh_services_map import services_map
 from api_gateway.infrastructure.authentication.firebase_auth_provider import FirebaseAuthProvider
 
@@ -53,6 +54,7 @@ class FirebaseUser:
 
         self.uid = login_info['uid']
         self.token = json_response['idToken']
+        self.email = json_response['email']
 
     @classmethod
     def get_instance(cls):
@@ -74,17 +76,16 @@ class AuthenticatedAPIClient(APIClient):
 
     instance = None
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, db_user, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        firebase_user = FirebaseUser.get_instance()
-        user = User.objects.create_user(firebase_user.uid, 'Test', 'test', aka='t')
-        user._id = str(user._id)
-        self.force_authenticate(user=user)
+
+        #db_user._id = str(db_user._id)
+        self.force_authenticate(user=db_user)
 
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls, db_user):
         if not cls.instance:
-            cls.instance = AuthenticatedAPIClient()
+            cls.instance = AuthenticatedAPIClient(db_user)
         return cls.instance
 
 
@@ -95,7 +96,7 @@ class MockAuthenticatedAPIClient(APIClient):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         user = User(
-            _id='5678', provider_id='1234', name='test', last_name='test',
+            _id=generate_object_id(), provider_id='1234', name='test', last_name='test',
             email='test@test.com', phone_number='1234567', aka='tes'
         )
         self.force_authenticate(user=user)
@@ -108,8 +109,13 @@ class MockAuthenticatedAPIClient(APIClient):
 
 
 @pytest.fixture
-def authenticated_client():
-    return AuthenticatedAPIClient.get_instance()
+def authenticated_client(firebase_user):
+    user = User(provider_id=firebase_user.uid, name='Test', last_name='test', aka='t', email='test@test.com')
+    repository = MongoUserRepository()
+    user = repository.create(user)
+    yield AuthenticatedAPIClient.get_instance(user)
+    # Will be executed after the last test
+    repository.delete(user._id)
 
 
 @pytest.fixture

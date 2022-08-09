@@ -22,15 +22,10 @@ def test_register_user_successfully(mock_ff, firebase_user, client):
 
     response = client.post(REGISTER_USER_URL, payload, format='json')
 
-    user = User.objects.get(provider_id=firebase_user.uid)
     assert response.status_code == 200
-    assert response.data == {
-        'id': str(user._id),
-        'name': 'Test Name',
-        'last_name': 'Last Name',
-        'email': user.email,
-        'phone_number': user.phone_number,
-        'aka': 'test',
-    }
+    assert response.data['id'] is not None
+    assert response.data['name'] == 'Test Name'
+    assert response.data['last_name'] == 'Last Name'
+    assert response.data['email'] == firebase_user.email
+    assert response.data['aka'] == 'test'
     assert payload['token'] not in response.data
-    assert user

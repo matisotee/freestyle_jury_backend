@@ -30,6 +30,7 @@ SECRET_KEY = get_env_variable('SECRET_KEY')
 
 INSTALLED_APPS = [
     'api_gateway.infrastructure.django.apps.ApiGatewayConfig',
+    'competition.infrastructure.django.apps.CompetitionConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +40,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg',
-    'competition'
 ]
 
 MIDDLEWARE = [
@@ -87,21 +87,11 @@ DB_USERNAME = get_env_variable_or_none('MONGO_USERNAME')
 DB_PASSWORD = get_env_variable_or_none('MONGO_PASSWORD')
 DB_NAME = get_env_variable_or_none('MONGO_DATABASE_NAME')
 
-DATABASES = {
-   'default': {
-       'ENGINE': 'djongo',
-       'NAME': DB_NAME,
-       'CLIENT': {
-            'host': 'mongodb+srv://{}:{}@cluster0.zhs7q.mongodb.net/{}?retryWrites=true&w=majority'.format(
-                DB_USERNAME,
-                DB_PASSWORD,
-                DB_NAME
-            ),
-            'username': DB_USERNAME,
-            'password': DB_PASSWORD,
-       },
-   }
-}
+MONGO_URL = 'mongodb+srv://{}:{}@cluster0.zhs7q.mongodb.net/{}?retryWrites=true&w=majority'.format(
+    DB_USERNAME,
+    DB_PASSWORD,
+    DB_NAME
+)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -142,7 +132,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-AUTH_USER_MODEL = 'api_gateway.User'
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
@@ -178,6 +167,13 @@ SWAGGER_SETTINGS = {
             'name': 'Authorization',
             'in': 'header'
         }
+    }
+}
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
