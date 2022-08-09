@@ -7,12 +7,13 @@ from api_gateway.application.authenticate import AuthenticationService
 from api_gateway.application.exceptions.authentication import AuthenticationError
 from api_gateway.domain.models import User
 from api_gateway.infrastructure.authentication.django_authentication import DjangoAuthentication
+from test.utils import generate_object_id
 
 
 @patch.object(AuthenticationService, 'authenticate')
 def test_authenticate(mock_authenticate):
     expected_user = User(
-        _id='5678', provider_id='1234', name='test', last_name='test',
+        _id=generate_object_id(), provider_id='1234', name='test', last_name='test',
         email='test@test.com', phone_number='1234567', aka='tes'
     )
     mock_authenticate.return_value = expected_user
