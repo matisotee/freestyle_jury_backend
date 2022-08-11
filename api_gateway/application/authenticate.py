@@ -10,7 +10,7 @@ from api_gateway.domain.exceptions.auth_provider import (
 )
 from api_gateway.domain.exceptions.user import NotExistentUserError
 from api_gateway.domain.repositories import UserRepository
-from api_gateway.infrastructure.django.dependency_injection import Container
+from api_gateway.infrastructure.dependency_injection.container import Container
 
 
 class AuthenticationService:

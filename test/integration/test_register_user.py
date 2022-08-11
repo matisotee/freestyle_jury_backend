@@ -1,13 +1,9 @@
 from unittest.mock import patch
 import pytest
 
-from api_gateway.domain.models import User
 from shared.feature_flags import FeatureFlagManager
 
-REGISTER_USER_URL = '/users/'
 
-
-@pytest.mark.django_db
 @pytest.mark.usefixtures("client")
 @pytest.mark.usefixtures("firebase_user")
 @patch.object(FeatureFlagManager, 'is_feature_enabled', return_value=True)
@@ -20,12 +16,12 @@ def test_register_user_successfully(mock_ff, firebase_user, client):
         'token': firebase_user.token,
     }
 
-    response = client.post(REGISTER_USER_URL, payload, format='json')
+    response = client.post('/users/', json=payload)
 
     assert response.status_code == 200
-    assert response.data['id'] is not None
-    assert response.data['name'] == 'Test Name'
-    assert response.data['last_name'] == 'Last Name'
-    assert response.data['email'] == firebase_user.email
-    assert response.data['aka'] == 'test'
-    assert payload['token'] not in response.data
+    assert response.json()['id'] is not None
+    assert response.json()['name'] == 'Test Name'
+    assert response.json()['last_name'] == 'Last Name'
+    assert response.json()['email'] == firebase_user.email
+    assert response.json()['aka'] == 'test'
+    assert payload['token'] not in response.json()

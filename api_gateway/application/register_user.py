@@ -6,9 +6,9 @@ from api_gateway.domain.exceptions.auth_provider import (
     InvalidTokenError, NotVerifiedEmailError,
 )
 from api_gateway.domain.exceptions.user import ExistingUserError
-from api_gateway.domain.models import User
+from api_gateway.domain.user import User
 from api_gateway.domain.repositories import UserRepository
-from api_gateway.infrastructure.django.dependency_injection import Container
+from api_gateway.infrastructure.dependency_injection.container import Container
 
 
 class UserRegistrar:

@@ -1,10 +1,9 @@
 from unittest.mock import patch
 import pytest
-from rest_framework import status
+from fastapi.routing import ValidationError
 
 from api_gateway.application.create_competition import CreateCompetitionService
 from api_gateway.application.exceptions.competition import CreateCompetitionError
-from api_gateway.infrastructure.controllers.base import ResponseError
 from test.utils import generate_object_id
 
 
@@ -12,7 +11,7 @@ from test.utils import generate_object_id
 @pytest.mark.usefixtures("mock_authenticated_client")
 @patch.object(CreateCompetitionService, 'create_competition')
 def test_create_competition_successfully(
-        mock_create_competition, mock_authenticated_client, now_date
+        mock_create_competition, client, now_date
 ):
     expected_response = {
         'name': "Rapublik",
@@ -24,13 +23,11 @@ def test_create_competition_successfully(
     payload = {
        'name': "Rapublik",
        'date': now_date,
-       'open_inscription_during_competition': True
     }
+    response = client.post('/users/me/competitions/', json=payload)
 
-    response = mock_authenticated_client.post('/users/me/competitions/', payload, format='json')
-
-    assert response.status_code == status.HTTP_200_OK
-    assert response.data == expected_response
+    assert response.status_code == 200
+    assert response.json() == expected_response
     mock_create_competition.assert_called()
 
 
@@ -38,7 +35,7 @@ def test_create_competition_successfully(
 @pytest.mark.usefixtures("mock_authenticated_client")
 @patch.object(CreateCompetitionService, 'create_competition')
 def test_create_competition_with_error(
-        mock_create_competition, mock_authenticated_client, now_date
+        mock_create_competition, client, now_date
 ):
     mock_create_competition.side_effect = CreateCompetitionError(
         message='Test', code='TEST_CODE'
@@ -50,34 +47,34 @@ def test_create_competition_with_error(
        'open_inscription_during_competition': True
     }
 
-    response = mock_authenticated_client.post('/users/me/competitions/', payload, format='json')
+    response = client.post('/users/me/competitions/', json=payload)
 
     assert response.status_code == 400
-    assert response.data['error_code'] == 'TEST_CODE'
+    assert response.json()['error_code'] == 'TEST_CODE'
     mock_create_competition.assert_called()
 
 
 @pytest.mark.usefixtures("now_date")
 @pytest.mark.usefixtures("mock_authenticated_client")
 def test_create_competition_with_request_schema_error(
-        mock_authenticated_client, now_date
+        client, now_date
 ):
     payload = {
        'date': now_date,
        'open_inscription_during_competition': True
     }
 
-    response = mock_authenticated_client.post('/users/me/competitions/', payload, format='json')
+    response = client.post('/users/me/competitions/', json=payload)
 
-    assert response.status_code == 400
-    assert response.data['error_code'] == 'FIELDS_ERROR'
+    assert response.status_code == 422
+    assert response.json()['error_code'] == 'FIELDS_ERROR'
 
 
 @pytest.mark.usefixtures("now_date")
 @pytest.mark.usefixtures("mock_authenticated_client")
 @patch.object(CreateCompetitionService, 'create_competition')
 def test_create_competition_with_response_schema_error(
-        mock_create_competition, mock_authenticated_client, now_date
+        mock_create_competition, client, now_date
 ):
     mock_create_competition.return_value = {
        'status': 'created'
@@ -89,5 +86,5 @@ def test_create_competition_with_response_schema_error(
        'open_inscription_during_competition': True
     }
 
-    with pytest.raises(ResponseError):
-        mock_authenticated_client.post('/users/me/competitions/', payload, format='json')
+    with pytest.raises(ValidationError):
+        client.post('/users/me/competitions/', json=payload)

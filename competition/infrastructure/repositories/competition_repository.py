@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from django.conf import settings
+from shared.settings import settings
 
 from competition.domain.repositories import CompetitionRepository
 

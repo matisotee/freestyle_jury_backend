@@ -10,3 +10,6 @@ class Container(containers.DeclarativeContainer):
     competition_repository = providers.Factory(
         MongoCompetitionRepository
     )
+
+
+container = Container()

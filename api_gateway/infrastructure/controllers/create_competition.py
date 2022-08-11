@@ -1,39 +1,40 @@
-from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
+from datetime import datetime
+from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 
 from api_gateway.application.create_competition import CreateCompetitionService
 from api_gateway.application.exceptions.competition import CreateCompetitionError
-from api_gateway.infrastructure.authentication.django_authentication import DjangoAuthentication
-from api_gateway.infrastructure.controllers.base import BaseAPIView, CharField, decode_user_id
+from api_gateway.domain.user import User
+from api_gateway.infrastructure.authentication.fast_api_authentication import authenticate_with_token
+from api_gateway.infrastructure.controllers.base import get_path_user_id
+from api_gateway.infrastructure.controllers.exceptions import HTTPException
 
 
-class CreateCompetitionRequestSerializer(serializers.Serializer):
-    name = CharField(max_length=255)
-    date = serializers.DateTimeField()
+router = APIRouter()
 
 
-class CreateCompetitionResponseSerializer(serializers.Serializer):
-    name = CharField(max_length=255)
-    status = CharField(max_length=255)
-    id = CharField(max_length=255)
+class CompetitionDataRequest(BaseModel):
+    name: str
+    date: datetime
 
 
-class CreateCompetitionView(BaseAPIView):
-    """Create a new competition"""
-    authentication_classes = [DjangoAuthentication]
-    permission_classes = []
-    request_serializer_class = CreateCompetitionRequestSerializer
-    response_serializer_class = CreateCompetitionResponseSerializer
+class CompetitionDataResponse(BaseModel):
+    name: str
+    status: str
+    id: str
 
-    @decode_user_id
-    def post(self, request, *args, **kwargs):
 
-        try:
-            service = CreateCompetitionService()
-            response = service.create_competition(
-                **request.data, organizer_id=kwargs['user_id']
-            )
-            return Response(response)
-        except CreateCompetitionError as e:
-            raise ValidationError(e.message, code=e.code)
+@router.post("/users/{user_id}/competitions/", response_model=CompetitionDataResponse)
+async def create_competition(
+        competition_data: CompetitionDataRequest,
+        organizer_id: str = Depends(get_path_user_id),
+        user: User = Depends(authenticate_with_token)
+):
+    try:
+        service = CreateCompetitionService()
+        return service.create_competition(
+            name=competition_data.name, date=str(competition_data.date), organizer_id=organizer_id
+        )
+    except CreateCompetitionError as e:
+        raise HTTPException(status_code=400, error_code=e.code, description=e.message)
+

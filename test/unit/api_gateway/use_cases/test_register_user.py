@@ -7,7 +7,7 @@ from api_gateway.application.exceptions.registration import RegistrationError
 from api_gateway.application.register_user import UserRegistrar
 from api_gateway.domain.auth_provider import ProviderUserData
 from api_gateway.domain.exceptions.auth_provider import InvalidTokenError, NotVerifiedEmailError
-from api_gateway.domain.models import User
+from api_gateway.domain.user import User
 
 
 def test_register_user():

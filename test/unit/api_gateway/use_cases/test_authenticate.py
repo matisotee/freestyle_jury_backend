@@ -7,7 +7,7 @@ from api_gateway.application.exceptions.authentication import AuthenticationErro
 from api_gateway.domain.auth_provider import ProviderUserData
 from api_gateway.domain.exceptions.auth_provider import InvalidTokenError, NotVerifiedEmailError
 from api_gateway.domain.exceptions.user import NotExistentUserError
-from api_gateway.domain.models import User
+from api_gateway.domain.user import User
 from test.utils import generate_object_id
 
 

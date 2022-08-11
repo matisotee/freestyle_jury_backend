@@ -1,7 +1,7 @@
-from django.conf import settings
 from firebase_admin import auth, credentials, initialize_app
 from api_gateway.domain.auth_provider import AuthProvider, ProviderUserData
 from api_gateway.domain.exceptions.auth_provider import InvalidTokenError, NotVerifiedEmailError
+from shared.settings import settings
 
 
 class FirebaseAuthProvider(AuthProvider):
