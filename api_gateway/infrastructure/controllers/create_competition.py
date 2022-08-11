@@ -37,4 +37,3 @@ async def create_competition(
         )
     except CreateCompetitionError as e:
         raise HTTPException(status_code=400, error_code=e.code, description=e.message)
-

@@ -8,4 +8,3 @@ def get_path_user_id(user_id: str, authenticated_user: User = Depends(authentica
         return str(authenticated_user._id)
     else:
         return user_id
-

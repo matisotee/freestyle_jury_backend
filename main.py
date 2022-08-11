@@ -38,4 +38,3 @@ async def validation_exception_handler(request, exc):
 
 apply_api_gateway_injections()
 apply_competition_injections()
-
