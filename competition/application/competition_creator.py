@@ -2,7 +2,7 @@ from competition.application.exceptions import CompetitionApplicationError
 from competition.domain.exceptions import CompetitionPastDateError
 from competition.domain.models.competition import Competition
 from competition.domain.repositories import CompetitionRepository
-from competition.infrastructure.django.dependency_injection import Container
+from competition.infrastructure.dependency_injection.container import Container
 
 from dependency_injector.wiring import inject, Provide
 

@@ -1,20 +1,19 @@
 import pytest
-from rest_framework import status
 
 
-@pytest.mark.django_db
+@pytest.mark.usefixtures("authorization_header")
 @pytest.mark.usefixtures("now_date")
-@pytest.mark.usefixtures("authenticated_client")
-def test_create_competition_successfully(authenticated_client, now_date):
+@pytest.mark.usefixtures("client")
+def test_create_competition_successfully(client, now_date, authorization_header):
     """Test create a new competition with valid payload is successful"""
     payload = {
        'name': "Rapublik",
        'date': now_date
     }
 
-    response = authenticated_client.post('/users/me/competitions/', payload, format='json')
+    response = client.post('/users/me/competitions/', json=payload, headers=authorization_header)
 
-    assert response.status_code == status.HTTP_200_OK
-    assert response.data['name'] == 'Rapublik'
-    assert response.data['status'] == 'created'
-    assert 'id' in response.data
+    assert response.status_code == 200
+    assert response.json()['name'] == 'Rapublik'
+    assert response.json()['status'] == 'created'
+    assert 'id' in response.json()

@@ -1,4 +1,5 @@
 import os
+import importlib
 from django.core.exceptions import ImproperlyConfigured
 
 
@@ -15,3 +16,6 @@ def get_env_variable_or_none(var_name):
         return os.environ[var_name]
     except KeyError:
         return ''
+
+
+settings = importlib.import_module(os.environ['DJANGO_SETTINGS_MODULE'])

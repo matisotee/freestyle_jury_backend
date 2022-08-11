@@ -1,4 +1,4 @@
-from django.conf import settings
+from shared.settings import settings
 from optimizely import optimizely
 
 REGISTER_ENDPOINT = 'register_endpoint'

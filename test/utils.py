@@ -1,20 +1,20 @@
 import datetime
-
-import pytest
 import pytz
+
+from fastapi.testclient import TestClient
+from firebase_admin import auth
+import pytest
 import requests
 from bson import ObjectId
-from django.conf import settings
 
-from firebase_admin import auth
-from rest_framework.test import APIClient
-
-from api_gateway.infrastructure.repositories.user_repository import MongoUserRepository
-from shared.frimesh_services_map import services_map
+from api_gateway.domain.user import User
+from api_gateway.infrastructure.authentication.fast_api_authentication import authenticate_with_token
 from api_gateway.infrastructure.authentication.firebase_auth_provider import FirebaseAuthProvider
-
-from api_gateway.domain.models import User
+from api_gateway.infrastructure.repositories.user_repository import MongoUserRepository
 from frimesh.client import FrimeshClient
+from main import app
+from shared.frimesh_services_map import services_map
+from shared.settings import settings
 
 
 def initialize_firebase():
@@ -72,60 +72,32 @@ def firebase_user():
     auth.delete_user(user.uid)
 
 
-class AuthenticatedAPIClient(APIClient):
-
-    instance = None
-
-    def __init__(self, db_user, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        #db_user._id = str(db_user._id)
-        self.force_authenticate(user=db_user)
-
-    @classmethod
-    def get_instance(cls, db_user):
-        if not cls.instance:
-            cls.instance = AuthenticatedAPIClient(db_user)
-        return cls.instance
-
-
-class MockAuthenticatedAPIClient(APIClient):
-
-    instance = None
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        user = User(
-            _id=generate_object_id(), provider_id='1234', name='test', last_name='test',
-            email='test@test.com', phone_number='1234567', aka='tes'
-        )
-        self.force_authenticate(user=user)
-
-    @classmethod
-    def get_instance(cls):
-        if not cls.instance:
-            cls.instance = MockAuthenticatedAPIClient()
-        return cls.instance
-
-
 @pytest.fixture
-def authenticated_client(firebase_user):
+def authorization_header(firebase_user):
     user = User(provider_id=firebase_user.uid, name='Test', last_name='test', aka='t', email='test@test.com')
     repository = MongoUserRepository()
     user = repository.create(user)
-    yield AuthenticatedAPIClient.get_instance(user)
-    # Will be executed after the last test
+    yield {"Authorization": f"Bearer {firebase_user.token}"}
     repository.delete(user._id)
+
+
+async def mock_authenticate_with_token():
+    return User(
+        _id=generate_object_id(), provider_id='1234', name='test', last_name='test',
+        email='test@test.com', phone_number='1234567', aka='tes'
+    )
 
 
 @pytest.fixture
 def mock_authenticated_client():
-    return MockAuthenticatedAPIClient.get_instance()
+    app.dependency_overrides[authenticate_with_token] = mock_authenticate_with_token
+    yield TestClient(app)
+    app.dependency_overrides = {}
 
 
 @pytest.fixture
 def client():
-    return APIClient()
+    return TestClient(app)
 
 
 @pytest.fixture

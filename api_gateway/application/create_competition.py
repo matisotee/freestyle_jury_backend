@@ -5,7 +5,7 @@ from dependency_injector.wiring import (
 from api_gateway.application.exceptions.competition import CreateCompetitionError
 from api_gateway.domain.exceptions.services import CallServiceError
 from api_gateway.domain.service_caller import ServiceCaller
-from api_gateway.infrastructure.django.dependency_injection import Container
+from api_gateway.infrastructure.dependency_injection.container import Container
 
 
 class CreateCompetitionService:

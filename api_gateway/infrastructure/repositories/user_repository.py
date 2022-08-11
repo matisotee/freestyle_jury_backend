@@ -1,11 +1,11 @@
 from pymongo import MongoClient
-from django.conf import settings
+from shared.settings import settings
 
 from api_gateway.domain.exceptions.user import (
     ExistingUserError,
     NotExistentUserError,
 )
-from api_gateway.domain.models import User
+from api_gateway.domain.user import User
 from api_gateway.domain.repositories import UserRepository
 
 
