@@ -1,6 +1,6 @@
 from typing import Union
 from fastapi import APIRouter
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 from api_gateway.application.exceptions.registration import RegistrationError
 from api_gateway.application.register_user import UserRegistrar
