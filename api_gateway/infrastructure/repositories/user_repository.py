@@ -1,4 +1,5 @@
 from bson import ObjectId
+from bson.errors import InvalidId
 from pymongo import MongoClient
 from shared.settings import settings
 
@@ -24,6 +25,19 @@ class MongoUserRepository(UserRepository):
         user_data.pop('id')
         user.id = str(self.collection.insert_one(user_data).inserted_id)
         return user
+
+    def get_by_id(self, user_id: str) -> User:
+        try:
+            mongo_id = ObjectId(user_id)
+        except InvalidId:
+            raise NotExistentUserError()
+
+        user_data = self.collection.find_one({'_id': mongo_id})
+        if not user_data:
+            raise NotExistentUserError()
+        user_data['id'] = str(user_data['_id'])
+        user_data.pop('_id')
+        return User(**user_data)
 
     def get_by_provider_id(self, provider_id: str) -> User:
         user_data = self.collection.find_one({'provider_id': provider_id})
