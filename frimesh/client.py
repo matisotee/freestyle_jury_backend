@@ -48,8 +48,3 @@ class FrimeshClient:
                 f'Error validating the call to "{service}" service in action "{action}". '
                 f'ValidationError: {str(e)}'
             )
-        except Exception as e:
-            raise ServerError(
-                f'Error during the call to "{service}" service in action "{action}". '
-                f'{str(type(e))}: {str(e)}'
-            )

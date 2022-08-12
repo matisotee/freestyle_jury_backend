@@ -22,6 +22,8 @@ class CompetitionDataResponse(BaseModel):
     name: str
     status: str
     id: str
+    date: datetime
+    organizer: str
 
 
 @router.post("/users/{user_id}/competitions/", response_model=CompetitionDataResponse)

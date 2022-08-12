@@ -1,6 +1,7 @@
 from unittest.mock import patch
 import pytest
 
+from api_gateway.infrastructure.repositories.user_repository import MongoUserRepository
 from shared.feature_flags import FeatureFlagManager
 
 
@@ -25,3 +26,6 @@ def test_register_user_successfully(mock_ff, firebase_user, client):
     assert response.json()['email'] == firebase_user.email
     assert response.json()['aka'] == 'test'
     assert payload['token'] not in response.json()
+
+    repository = MongoUserRepository()
+    repository.delete(response.json()['id'])

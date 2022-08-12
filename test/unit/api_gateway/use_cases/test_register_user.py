@@ -1,6 +1,8 @@
 from unittest.mock import MagicMock
 
 import pytest
+from test.utils import generate_object_id
+
 from api_gateway.domain.exceptions.user import ExistingUserError
 
 from api_gateway.application.exceptions.registration import RegistrationError
@@ -12,6 +14,7 @@ from api_gateway.domain.user import User
 
 def test_register_user():
     expected_user = User(
+        id=str(generate_object_id()),
         name='test_name',
         last_name='test_last_name',
         aka='test_aka',
@@ -31,11 +34,11 @@ def test_register_user():
         expected_user.name, expected_user.last_name, 'test_token', expected_user.aka
     )
 
-    assert result['name'] == expected_user.name
-    assert result['last_name'] == expected_user.last_name
-    assert result['aka'] == expected_user.aka
-    assert result['email'] == expected_user.email
-    assert result['phone_number'] == ''
+    assert result.name == expected_user.name
+    assert result.last_name == expected_user.last_name
+    assert result.aka == expected_user.aka
+    assert result.email == expected_user.email
+    assert result.phone_number == ''
     mock_provider.get_user_data.assert_called_once_with('test_token')
     assert mock_user_repository.create.call_args[0][0].email == expected_user.email
 

@@ -78,7 +78,7 @@ def authorization_header(firebase_user):
     repository = MongoUserRepository()
     user = repository.create(user)
     yield {"Authorization": f"Bearer {firebase_user.token}"}
-    repository.delete(user._id)
+    repository.delete(user.id)
 
 
 async def mock_authenticate_with_token():

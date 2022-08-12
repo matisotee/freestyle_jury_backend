@@ -6,7 +6,7 @@ from api_gateway.domain.exceptions.auth_provider import (
     InvalidTokenError, NotVerifiedEmailError,
 )
 from api_gateway.domain.exceptions.user import ExistingUserError
-from api_gateway.domain.user import User
+from api_gateway.domain.user import User, UserExternalRepresentation
 from api_gateway.domain.repositories import UserRepository
 from api_gateway.infrastructure.dependency_injection.container import Container
 
@@ -22,7 +22,7 @@ class UserRegistrar:
         self._auth_provider = auth_provider
         self._repository = user_repository
 
-    def register_user(self, name: str, last_name: str, token: str, aka: str = '') -> dict:
+    def register_user(self, name: str, last_name: str, token: str, aka: str = '') -> UserExternalRepresentation:
         try:
             provider_user_data = self._auth_provider.get_user_data(token)
             user = User(
@@ -41,15 +41,4 @@ class UserRegistrar:
         except ExistingUserError as e:
             raise RegistrationError(str(e), 'USER_ALREADY_EXISTS')
 
-        return self._map_user_to_dict(user)
-
-    @staticmethod
-    def _map_user_to_dict(user):
-        return {
-            'id': str(user._id),
-            'name': user.name,
-            'last_name': user.last_name,
-            'email': user.email,
-            'phone_number': user.phone_number,
-            'aka': user.aka
-        }
+        return UserExternalRepresentation(**user.dict())

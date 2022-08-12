@@ -9,7 +9,7 @@ from api_gateway.domain.service_caller import ServiceCaller
 
 class FrimeshServiceCaller(ServiceCaller):
 
-    def call(self, service, action, body):
+    def call(self, service: str, action: str, body: dict):
         client = FrimeshClient(services_map)
         try:
             return client.call(service, action, body)

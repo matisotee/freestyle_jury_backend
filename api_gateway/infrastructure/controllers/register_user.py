@@ -1,9 +1,10 @@
 from typing import Union
 from fastapi import APIRouter
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 from api_gateway.application.exceptions.registration import RegistrationError
 from api_gateway.application.register_user import UserRegistrar
+from api_gateway.domain.user import UserExternalRepresentation
 from api_gateway.infrastructure.controllers.exceptions import HTTPException
 from shared.feature_flags import FeatureFlagManager, REGISTER_ENDPOINT
 
@@ -18,16 +19,7 @@ class UserDataRequest(BaseModel):
     token: str
 
 
-class UserDataResponse(BaseModel):
-    id: str
-    name: str
-    last_name: str
-    email: EmailStr
-    phone_number: Union[str, None] = None
-    aka: Union[str, None] = None
-
-
-@router.post("/users/", response_model=UserDataResponse)
+@router.post("/users/", response_model=UserExternalRepresentation)
 async def register_user(user_data: UserDataRequest):
     if not FeatureFlagManager.is_feature_enabled(
             REGISTER_ENDPOINT
