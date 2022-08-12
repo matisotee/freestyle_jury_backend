@@ -22,13 +22,11 @@ class FirebaseAuthProvider(AuthProvider):
         if settings.FIREBASE_AUTH['EMAIL_VERIFICATION'] and not firebase_user.email_verified:
             raise NotVerifiedEmailError('Firebase')
 
-        user_data = ProviderUserData(
+        return ProviderUserData(
             id=firebase_user.uid,
             email=firebase_user.email if firebase_user.email is not None else '',
             phone_number=firebase_user.phone_number if firebase_user.phone_number is not None else ''
         )
-
-        return user_data
 
     @classmethod
     def initialize_credentials(cls):
@@ -41,7 +39,7 @@ class FirebaseAuthProvider(AuthProvider):
         cls.is_initialized = True
 
     @classmethod
-    def get_user_info_by_firebase_token(cls, firebase_token):
+    def get_user_info_by_firebase_token(cls, firebase_token: str):
 
         if not cls.is_initialized:
             cls.initialize_credentials()

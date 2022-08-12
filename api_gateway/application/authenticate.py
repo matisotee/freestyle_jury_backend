@@ -10,6 +10,7 @@ from api_gateway.domain.exceptions.auth_provider import (
 )
 from api_gateway.domain.exceptions.user import NotExistentUserError
 from api_gateway.domain.repositories import UserRepository
+from api_gateway.domain.user import User
 from api_gateway.infrastructure.dependency_injection.container import Container
 
 
@@ -25,7 +26,7 @@ class AuthenticationService:
         self._auth_provider = auth_provider
         self._user_repository = user_repository
 
-    def authenticate(self, auth_token):
+    def authenticate(self, auth_token: str) -> User:
         try:
             provider_user_data = self._auth_provider.get_user_data(auth_token)
             user = self._user_repository.get_by_provider_id(provider_user_data.id)

@@ -6,7 +6,7 @@ import pytz
 
 from competition.application.competition_creator import CompetitionCreator
 from competition.application.exceptions import CompetitionApplicationError
-from competition.domain.models.competition import Competition
+from competition.domain.competition import Competition
 from test.utils import generate_object_id
 
 
@@ -16,7 +16,7 @@ def competition():
         pytz.timezone('Etc/GMT+3')
     ) + datetime.timedelta(hours=1)
     return Competition(
-        _id=generate_object_id(),
+        id=str(generate_object_id()),
         name='Rapublik',
         organizer=generate_object_id(),
         date=date,
@@ -35,9 +35,9 @@ def test_create_competition_successfully(competition):
         organizer_id=competition.organizer,
     )
 
-    assert competition.name == result['name']
-    assert competition.status == result['status']
-    assert str(competition._id) == result['id']
+    assert competition.name == result.name
+    assert competition.status == result.status
+    assert str(competition.id) == result.id
     assert mock_competition_repository.create.call_args[0][0].name == competition.name
 
 

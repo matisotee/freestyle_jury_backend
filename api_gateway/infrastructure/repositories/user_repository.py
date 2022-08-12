@@ -1,3 +1,4 @@
+from bson import ObjectId
 from pymongo import MongoClient
 from shared.settings import settings
 
@@ -16,17 +17,21 @@ class MongoUserRepository(UserRepository):
         self.db = self.client.user
         self.collection = self.db.user
 
-    def create(self, user):
+    def create(self, user: User) -> User:
         if self.collection.count_documents({'provider_id': user.provider_id}) != 0:
             raise ExistingUserError()
-        user._id = self.collection.insert_one(user.to_dict()).inserted_id
+        user_data = user.dict()
+        user_data.pop('id')
+        user.id = str(self.collection.insert_one(user_data).inserted_id)
         return user
 
-    def get_by_provider_id(self, provider_id):
+    def get_by_provider_id(self, provider_id: str) -> User:
         user_data = self.collection.find_one({'provider_id': provider_id})
         if not user_data:
             raise NotExistentUserError()
+        user_data['id'] = str(user_data['_id'])
+        user_data.pop('_id')
         return User(**user_data)
 
-    def delete(self, user_id):
-        self.collection.delete_one({'_id': user_id})
+    def delete(self, user_id: str):
+        self.collection.delete_one({'_id': ObjectId(user_id)})

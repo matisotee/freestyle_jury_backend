@@ -14,10 +14,10 @@ class CreateCompetitionService:
     def __init__(self, service_caller: ServiceCaller = Provide[Container.service_caller]):
         self.service_caller = service_caller
 
-    def create_competition(self, name, date, organizer_id):
+    def create_competition(self, name: str, date: str, organizer_id: str) -> dict:
 
         try:
-            competition = self.service_caller.call(
+            return self.service_caller.call(
                 'competition',
                 'create_competition',
                 {
@@ -26,6 +26,5 @@ class CreateCompetitionService:
                     'organizer_id': organizer_id
                 }
             )
-            return competition
         except CallServiceError as e:
             raise CreateCompetitionError(message=e.message, code=e.code)

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from frimesh import fields, Schema
 from frimesh.action import FrimeshAction
 from frimesh.exceptions import ActionError
@@ -16,12 +18,10 @@ class CreateCompetitionAction(FrimeshAction):
 
     schema = CreateCompetitionSchema
 
-    def run(
-        self, organizer_id, name, date, **kwargs
-    ):
+    def run(self, organizer_id: str, name: str, date: datetime, **kwargs):
         try:
             response = CompetitionCreator().create_competition(organizer_id, name, date)
 
-            return response
+            return response.dict()
         except CompetitionApplicationError as e:
             raise ActionError(e.message, code=e.code)

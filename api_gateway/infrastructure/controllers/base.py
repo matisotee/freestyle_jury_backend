@@ -5,6 +5,6 @@ from api_gateway.infrastructure.authentication.fast_api_authentication import au
 
 def get_path_user_id(user_id: str, authenticated_user: User = Depends(authenticate_with_token)):
     if user_id == 'me':
-        return str(authenticated_user._id)
+        return str(authenticated_user.id)
     else:
         return user_id

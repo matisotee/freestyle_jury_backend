@@ -16,7 +16,9 @@ def test_create_competition_successfully(
     expected_response = {
         'name': "Rapublik",
         'status': 'created',
-        'id': generate_object_id()
+        'id': str(generate_object_id()),
+        'date': '2023-10-30T19:30:30-03:00',
+        'organizer': '62f6b2cbaef453297aba0f3d'
     }
     mock_create_competition.return_value = expected_response
 
