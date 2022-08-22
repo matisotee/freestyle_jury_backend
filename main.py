@@ -7,6 +7,8 @@ from api_gateway.infrastructure.controllers.exceptions import HTTPException
 from api_gateway.infrastructure.controllers import register_user, create_competition
 from api_gateway.infrastructure.dependency_injection.injector import apply_api_gateway_injections
 from competition.infrastructure.dependency_injection.injector import apply_competition_injections
+from phase.infra.dependency_injection.injector import apply_phase_injections
+from phase.infra.subscribers import init_phase_subscribers
 
 app = FastAPI()
 
@@ -38,3 +40,7 @@ async def validation_exception_handler(request, exc):
 
 apply_api_gateway_injections()
 apply_competition_injections()
+apply_phase_injections()
+
+
+init_phase_subscribers()

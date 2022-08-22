@@ -7,6 +7,7 @@ from competition.domain.repositories import CompetitionRepository
 from competition.infrastructure.dependency_injection.container import Container
 
 from dependency_injector.wiring import inject, Provide
+from pubsub import pub
 
 
 class CompetitionCreator:
@@ -23,4 +24,5 @@ class CompetitionCreator:
         except CompetitionPastDateError:
             raise CompetitionApplicationError('Date: set a current or future date', code='PAST_DATE')
 
+        pub.sendMessage('competitionUpdated', competition=competition.dict())
         return competition
