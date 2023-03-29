@@ -54,7 +54,7 @@ jobs:
       uses: "WyriHaximus/github-action-get-previous-tag@master"
     - name: Deploy to Dockerhub
       if: env.HAS_CHANGES == 'true'
-      uses: elgohr/Publish-Docker-Github-Action@master
+      uses: elgohr/Publish-Docker-Github-Action@v5
       with:
         name: matisotee/freestyle-jury-api
         username: ${{ secrets.DOCKER_USERNAME }}
